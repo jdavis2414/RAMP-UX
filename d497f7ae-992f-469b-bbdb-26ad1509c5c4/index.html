@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Northrop Grumman Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Brand Color Tokens Extracted from References */
+      --bg: #ffffff;
+      --surface: #090a0f;
+      --surface-elevated: #14161f;
+      --navy-banner: #00205b;
+      --fg: #111111;
+      --fg-inverted: #ffffff;
+      --muted: #666666;
+      --muted-inverted: #a0a0a0;
+      --border: #e2e2e2;
+      --border-dark: #2a2d3d;
+      --accent: #0033cc;
+      --accent-hover: #002699;
+
+      /* Typography Tokens */
+      --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+      /* Geometry Rules */
+      --radius: 0px;
+      --border-width: 1px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0d0f17;
+      color: var(--fg-inverted);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* System Top Navbar */
+    .sys-header {
+      background-color: #000000;
+      border-bottom: 1px solid var(--border-dark);
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      flex-direction: column;
+      position: relative;
+      padding-right: 12px;
+      padding-top: 4px;
+    }
+
+    .brand-logo-text {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 18px;
+      line-height: 0.95;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
+
+    /* Northrop Grumman signature bracket logo motif */
+    .bracket-motif-frame {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 16px;
+      border-top: 3px solid #ffffff;
+      border-right: 3px solid #ffffff;
+    }
+
+    .sys-title-tag {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #a0a0a0;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      padding: 4px 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .sys-nav {
+      display: flex;
+      gap: 24px;
+    }
+
+    .sys-nav a {
+      color: var(--muted-inverted);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .sys-nav a:hover, .sys-nav a.active {
+      color: #ffffff;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* Section Styling */
+    .section {
+      background-color: var(--surface);
+      border: 1px solid var(--border-dark);
+      margin-bottom: 40px;
+      padding: 32px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--border-dark);
+      padding-bottom: 16px;
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #ffffff;
+    }
+
+    .section-sub {
+      color: var(--muted-inverted);
+      font-size: 14px;
+      font-family: var(--font-mono);
+    }
+
+    /* Color Palette Grid */
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .color-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border-dark);
+      overflow: hidden;
+    }
+
+    .color-swatch {
+      height: 100px;
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      padding: 12px;
+    }
+
+    .color-meta {
+      padding: 12px;
+    }
+
+    .color-name {
+      font-weight: 700;
+      font-size: 14px;
+      color: #ffffff;
+    }
+
+    .color-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted-inverted);
+      margin-top: 4px;
+    }
+
+    .color-oklch {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: #777777;
+    }
+
+    /* Typography Showcase */
+    .type-specimen {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .type-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      align-items: baseline;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .type-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted-inverted);
+    }
+
+    .type-sample-display1 {
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .type-sample-h1 {
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    .type-sample-h2 {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .type-sample-body {
+      font-size: 16px;
+      color: #cccccc;
+    }
+
+    .type-sample-meta {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted-inverted);
+    }
+
+    /* Live Component Samples Rendered on White Canvas */
+    .component-preview-wrapper {
+      background-color: var(--bg);
+      color: var(--fg);
+      padding: 40px;
+      border: 1px solid var(--border);
+    }
+
+    /* Component: Header Replica */
+    .ng-header-replica {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+
+    .ng-logo-box {
+      position: relative;
+      padding-right: 14px;
+      padding-top: 4px;
+      display: inline-block;
+    }
+
+    .ng-logo-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      line-height: 0.95;
+      text-transform: uppercase;
+    }
+
+    .ng-logo-bracket {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 18px;
+      border-top: 4px solid #ffffff;
+      border-right: 4px solid #ffffff;
+    }
+
+    .ng-utility-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .ng-utility-nav a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+    .ng-nav-divider {
+      color: #555555;
+    }
+
+    .ng-search-box {
+      display: flex;
+      align-items: center;
+      border: 1px solid #666666;
+      padding: 6px 12px;
+      width: 200px;
+      justify-content: space-between;
+    }
+
+    .ng-search-input {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 12px;
+      outline: none;
+      width: 140px;
+    }
+
+    /* Component: Subnav Category Bar */
+    .ng-subnav-bar {
+      background-color: #f4f4f6;
+      border-bottom: 1px solid #e2e2e2;
+      padding: 16px 40px;
+      display: flex;
+      gap: 32px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #0033cc;
+      margin-bottom: 32px;
+    }
+
+    .ng-subnav-item {
+      cursor: pointer;
+      text-decoration: none;
+      color: #0033cc;
+    }
+
+    .ng-subnav-item:hover {
+      text-decoration: underline;
+    }
+
+    /* Component: Breadcrumbs Bar */
+    .ng-breadcrumb-bar {
+      background-color: #000000;
+      color: #ffffff;
+      padding: 14px 40px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .ng-breadcrumb-bar .sep {
+      color: #888888;
+      font-size: 12px;
+    }
+
+    .ng-breadcrumb-bar .current {
+      color: #aaaaaa;
+    }
+
+    /* Component: Hero Carousel Replica (Reference mrw7o4r9-image.png) */
+    .ng-hero-replica {
+      background-color: #000000;
+      color: #ffffff;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      min-height: 480px;
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .ng-hero-content {
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+    }
+
+    .ng-newsroom-badge {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 32px;
+    }
+
+    .ng-hero-headline {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      letter-spacing: -0.01em;
+    }
+
+    .ng-hero-deck {
+      font-size: 14px;
+      color: #cccccc;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .ng-read-time {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a0a0a0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-block;
+      width: fit-content;
+      text-decoration: none;
+      border-radius: 0px;
+      transition: background-color 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .ng-carousel-dots {
+      display: flex;
+      gap: 8px;
+      margin-top: 32px;
+    }
+
+    .ng-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      cursor: pointer;
+    }
+
+    .ng-dot.active {
+      background-color: var(--accent);
+    }
+
+    .ng-hero-image-wrap {
+      position: relative;
+      overflow: hidden;
+      background-color: #1a1d28;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ng-hero-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .ng-arrow-prev, .ng-arrow-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #ffffff;
+      font-size: 32px;
+      cursor: pointer;
+      user-select: none;
+      padding: 12px;
+      z-index: 10;
+    }
+
+    .ng-arrow-prev { left: 8px; }
+    .ng-arrow-next { right: 8px; }
+
+    /* Component: Corner Bracket Header Motif (Reference mrw7o4v5-image.png) */
+    .ng-section-header-framed {
+      position: relative;
+      padding-top: 16px;
+      padding-right: 32px;
+      margin-bottom: 24px;
+    }
+
+    .ng-section-header-framed h2 {
+      font-size: 36px;
+      font-weight: 800;
+      color: #111111;
+      line-height: 1.15;
+    }
+
+    .corner-bracket-accent {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 36px;
+      height: 36px;
+      border-top: 6px solid #000000;
+      border-right: 6px solid #000000;
+    }
+
+    /* Component: Search Newsroom Input */
+    .ng-newsroom-search {
+      margin-top: 32px;
+    }
+
+    .ng-newsroom-search label {
+      display: block;
+      font-size: 24px;
+      font-weight: 700;
+      color: #111111;
+      margin-bottom: 12px;
+    }
+
+    .ng-newsroom-search input {
+      width: 100%;
+      border: 1px solid #cccccc;
+      padding: 12px 16px;
+      font-size: 16px;
+      outline: none;
+      border-radius: 0px;
+    }
+
+    /* JSON Code Viewer */
+    .code-block {
+      background-color: var(--surface-elevated);
+      border: 1px solid var(--border-dark);
+      padding: 20px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: #00ffaa;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Action bar */
+    .action-bar {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-dark);
+      color: #ffffff;
+      padding: 8px 16px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+    }
+
+    .btn-secondary:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- System Navigation Header -->
+  <header class="sys-header" data-od-id="ds-header">
+    <div class="brand-logo-wrap">
+      <div class="brand-logo">
+        <span class="brand-logo-text">NORTHROP<br />GRUMMAN</span>
+        <div class="bracket-motif-frame"></div>
+      </div>
+      <span class="sys-title-tag">DESIGN SYSTEM v1.0</span>
+    </div>
+    <nav class="sys-nav">
+      <a href="#overview" class="active">Overview</a>
+      <a href="#tokens">Tokens</a>
+      <a href="#components">Components</a>
+      <a href="#json-spec">JSON Spec</a>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- Overview Section -->
+    <section id="overview" class="section" data-od-id="ds-overview">
+      <div class="section-header">
+        <div>
+          <h1 class="section-title">Design System Specifications</h1>
+          <p class="section-sub">Derived from Northrop Grumman aerospace product interface references</p>
+        </div>
+        <span class="sys-title-tag">AESTHETIC POSTURE: TECH / UTILITY AEROSPACE</span>
+      </div>
+
+      <p style="color: #cccccc; max-width: 800px; margin-bottom: 24px;">
+        This system codifies the authoritative design tokens, typographic hierarchy, and structural UI components observed across Northrop Grumman product surfaces. Key characteristics include sharp 0px geometry, high-contrast dark-to-light rhythm, the signature right-angle corner bracket motif, and restrained electric blue CTAs.
+      </p>
+
+      <div class="action-bar">
+        <button class="btn-primary" onclick="location.href='#components'">Explore Components</button>
+        <button class="btn-secondary" onclick="copyTokensJSON()">Copy Tokens JSON</button>
+      </div>
+    </section>
+
+    <!-- Color Tokens Section -->
+    <section id="tokens" class="section" data-od-id="ds-tokens">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Color Palette Tokens</h2>
+          <p class="section-sub">OKLch color space definitions for high-contrast accessibility</p>
+        </div>
+      </div>
+
+      <div class="color-grid">
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: #000000; border-bottom: 1px solid #333;"></div>
+          <div class="color-meta">
+            <div class="color-name">Surface Dark</div>
+            <div class="color-value">#090A0F</div>
+            <div class="color-oklch">oklch(12% 0.01 260)</div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: #ffffff; border-bottom: 1px solid #e2e2e2;"></div>
+          <div class="color-meta">
+            <div class="color-name" style="color:#ffffff;">Canvas Light</div>
+            <div class="color-value">#FFFFFF</div>
+            <div class="color-oklch">oklch(100% 0 0)</div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: #0033cc;"></div>
+          <div class="color-meta">
+            <div class="color-name">Primary Accent Blue</div>
+            <div class="color-value">#0033CC</div>
+            <div class="color-oklch">oklch(42% 0.22 264)</div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: #00205b;"></div>
+          <div class="color-meta">
+            <div class="color-name">Navy Banner</div>
+            <div class="color-value">#00205B</div>
+            <div class="color-oklch">oklch(22% 0.12 260)</div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: #111111; border-bottom: 1px solid #333;"></div>
+          <div class="color-meta">
+            <div class="color-name">Text Primary</div>
+            <div class="color-value">#111111</div>
+            <div class="color-oklch">oklch(12% 0 0)</div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background-color: #666666;"></div>
+          <div class="color-meta">
+            <div class="color-name">Text Muted</div>
+            <div class="color-value">#666666</div>
+            <div class="color-oklch">oklch(50% 0 0)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Typography Tokens Section -->
+    <section class="section" data-od-id="ds-typography">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Typography Hierarchy</h2>
+          <p class="section-sub">Geometric sans-serif type scale (Inter)</p>
+        </div>
+      </div>
+
+      <div class="type-specimen">
+        <div class="type-row">
+          <div class="type-meta">Display 1 (40px/800)</div>
+          <div class="type-sample-display1">Mission Robotic Vehicle Launches</div>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">Heading 1 (32px/700)</div>
+          <div class="type-sample-h1">Missile Defense Expertise for Homeland</div>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">Heading 2 (24px/700)</div>
+          <div class="type-sample-h2">Search Newsroom Media Archives</div>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">Body Copy (16px/400)</div>
+          <div class="type-sample-body">
+            Northrop Grumman offers the most comprehensive and diversified portfolio of missile defense capabilities, leveraging decades of experience as a strategic partner.
+          </div>
+        </div>
+        <div class="type-row">
+          <div class="type-meta">Meta / Caption (12px/600)</div>
+          <div class="type-sample-meta">⏱ 2 MIN READ · CAPE CANAVERAL, Fla. — JULY 22, 2026</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Component Library Section -->
+    <section id="components" class="section" data-od-id="ds-components">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Component Showcase</h2>
+          <p class="section-sub">Rendered component implementations on light canvas</p>
+        </div>
+      </div>
+
+      <div class="component-preview-wrapper">
+
+        <!-- 1. Top Header Component -->
+        <h3 style="font-size: 14px; color: #666; margin-bottom: 12px; font-family: var(--font-mono);">01. BRAND HEADER & SEARCH BAR</h3>
+        <div class="ng-header-replica" data-od-id="comp-header">
+          <div class="ng-logo-box">
+            <div class="ng-logo-title">NORTHROP<br />GRUMMAN</div>
+            <div class="ng-logo-bracket"></div>
+          </div>
+          <div class="ng-utility-nav">
+            <a href="#">Who We Are</a>
+            <span class="ng-nav-divider">|</span>
+            <a href="#">What We Do</a>
+            <span class="ng-nav-divider">|</span>
+            <a href="#">Careers</a>
+            <div class="ng-search-box">
+              <input type="text" class="ng-search-input" placeholder="Search Newsroom" />
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Subnav Category Bar -->
+        <h3 style="font-size: 14px; color: #666; margin-bottom: 12px; font-family: var(--font-mono);">02. SUBNAVIGATION CATEGORY TABS</h3>
+        <div class="ng-subnav-bar" data-od-id="comp-subnav">
+          <a class="ng-subnav-item">Understanding The Threat</a>
+          <a class="ng-subnav-item">Detect, Track, And Discriminate</a>
+          <a class="ng-subnav-item">Command And Control</a>
+          <a class="ng-subnav-item">Mitigate The Threat</a>
+        </div>
+
+        <!-- 3. Breadcrumb Navigation -->
+        <h3 style="font-size: 14px; color: #666; margin-bottom: 12px; font-family: var(--font-mono);">03. BREADCRUMB BAR</h3>
+        <div class="ng-breadcrumb-bar" data-od-id="comp-breadcrumb">
+          <span>Home</span>
+          <span class="sep">&gt;</span>
+          <span>What We Do</span>
+          <span class="sep">&gt;</span>
+          <span class="current">Missile Defense</span>
+        </div>
+
+        <!-- 4. Hero Carousel Component (Reference mrw7o4r9-image.png) -->
+        <h3 style="font-size: 14px; color: #666; margin-bottom: 12px; font-family: var(--font-mono);">04. SPLIT HERO CAROUSEL</h3>
+        <div class="ng-hero-replica" data-od-id="comp-hero">
+          <div class="ng-arrow-prev">&lsaquo;</div>
+          <div class="ng-arrow-next">&rsaquo;</div>
+
+          <div class="ng-hero-content">
+            <div class="ng-newsroom-badge">Newsroom</div>
+            <h1 class="ng-hero-headline">
+              Northrop Grumman’s Mission Robotic Vehicle Launches, Ushering in a New Era of In-Space Servicing
+            </h1>
+            <p class="ng-hero-deck">
+              CAPE CANAVERAL, Fla. – Northrop Grumman’s Mission Robotic Vehicle and three Mission Extension Pods launched successfully...
+            </p>
+            <div class="ng-read-time">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              2 MIN READ
+            </div>
+            <a href="#" class="btn-primary">Read More</a>
+
+            <div class="ng-carousel-dots">
+              <div class="ng-dot active"></div>
+              <div class="ng-dot"></div>
+              <div class="ng-dot"></div>
+              <div class="ng-dot"></div>
+            </div>
+          </div>
+
+          <div class="ng-hero-image-wrap">
+            <img src="mrw7o4r9-image.png" alt="Northrop Grumman Satellite Vehicle" />
+          </div>
+        </div>
+
+        <!-- 5. Framed Section Title with Corner Bracket (Reference mrw7o4v5-image.png) -->
+        <h3 style="font-size: 14px; color: #666; margin-bottom: 12px; font-family: var(--font-mono);">05. FRAMED SECTION HEADER WITH CORNER BRACKET MOTIF</h3>
+        <div class="ng-section-header-framed" data-od-id="comp-corner-header">
+          <h2>Missile Defense Expertise for a Secure Homeland</h2>
+          <div class="corner-bracket-accent"></div>
+        </div>
+        <p style="color: #333333; font-size: 16px; margin-bottom: 32px; max-width: 900px;">
+          Northrop Grumman offers the most comprehensive and diversified portfolio of missile defense capabilities, leveraging decades of experience as a strategic partner in mission-critical programs.
+        </p>
+
+        <!-- 6. Search Newsroom Input -->
+        <h3 style="font-size: 14px; color: #666; margin-bottom: 12px; font-family: var(--font-mono);">06. FORM INPUT FIELD</h3>
+        <div class="ng-newsroom-search" data-od-id="comp-search">
+          <label>Search Newsroom</label>
+          <input type="text" placeholder="Enter keywords, press releases, or topics..." />
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Structural JSON Spec Section -->
+    <section id="json-spec" class="section" data-od-id="ds-json-spec">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Design Tokens Export (JSON)</h2>
+          <p class="section-sub">Frontend developer machine-readable token contract</p>
+        </div>
+      </div>
+
+      <pre class="code-block" id="json-display">{
+  "name": "Northrop Grumman Design System",
+  "tokens": {
+    "colors": {
+      "surface": "#090a0f",
+      "canvas": "#ffffff",
+      "accent": "#0033cc",
+      "navyBanner": "#00205b",
+      "fg": "#111111",
+      "muted": "#666666"
+    },
+    "typography": {
+      "displayFont": "Inter, sans-serif",
+      "borderRadius": "0px"
+    }
+  }
+}</pre>
+    </section>
+
+  </main>
+
+  <script>
+    function copyTokensJSON() {
+      const code = document.getElementById('json-display').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('Tokens JSON copied to clipboard!');
+      });
+    }
+  </script>
+
+</body>
+</html>

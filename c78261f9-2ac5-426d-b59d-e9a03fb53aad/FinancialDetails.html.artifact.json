@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "FinancialDetails.html",
+  "entry": "FinancialDetails.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-07-31T13:15:00.500Z",
+  "updatedAt": "2026-07-31T13:15:00.500Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

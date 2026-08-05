@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ramp Portal - Dashboard</title>
+  
+  <!-- Product Brand Typography & Baseline -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* 
+      ONLY the registered brand palette is used:
+      Background: #ffffff
+      Foreground: #111111
+      Accent: #1677ff
+      Surface: #f7f8fa
+      Muted: #6b7280
+      Border: #d9dee7
+    */
+    :root {
+      --bg: #ffffff;
+      --fg: #111111;
+      --accent: #1677ff;
+      --surface: #f7f8fa;
+      --muted: #6b7280;
+      --border: #d9dee7;
+      
+      --radius: 8px;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Classification Bar */
+    .classification-bar {
+      background-color: var(--fg);
+      color: var(--bg);
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .classification-bar.bottom {
+      border-bottom: none;
+      border-top: 1px solid var(--border);
+      margin-top: auto;
+    }
+    .classification-tag {
+      background-color: var(--accent);
+      color: var(--bg);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 9px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Appbar */
+    .appbar {
+      background-color: var(--bg);
+      border-bottom: 1px solid var(--border);
+      height: 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 900;
+    }
+    .appbar-leading {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .appbar-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--fg);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .appbar-title svg {
+      color: var(--accent);
+    }
+    .appbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Interactive Role Selector Pill */
+    .role-selector {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px;
+      display: flex;
+      gap: 4px;
+    }
+    .role-btn {
+      background: none;
+      border: none;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      letter-spacing: 0.02em;
+    }
+    .role-btn.active {
+      background-color: var(--fg);
+      color: var(--bg);
+    }
+
+    .profile-btn {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--fg);
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+    .profile-btn:hover {
+      border-color: var(--accent);
+      background-color: var(--bg);
+    }
+
+    /* Main Grid & Containers */
+    .main-container {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 40px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 24px;
+    }
+    .header-text h1 {
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .header-text p {
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    /* Workflow Buttons */
+    .quick-actions {
+      display: flex;
+      gap: 16px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background-color: var(--fg);
+      color: var(--bg);
+      border: 1px solid var(--fg);
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+    .btn-secondary {
+      background-color: var(--bg);
+      color: var(--fg);
+      border-color: var(--border);
+    }
+    .btn-secondary:hover {
+      background-color: var(--surface);
+      border-color: var(--fg);
+    }
+    .btn-accent {
+      background-color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Section Panels */
+    .section-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    @media (min-width: 1024px) {
+      .section-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .panel {
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 16px;
+    }
+    .panel-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-title svg {
+      color: var(--muted);
+    }
+    .panel-count {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 12px;
+      color: var(--fg);
+    }
+
+    /* Cards Grid */
+    .cards-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Portal Card */
+    .portal-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: all 0.15s ease;
+    }
+    .portal-card:hover {
+      border-color: var(--muted);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .card-id {
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .status-badge svg {
+      color: var(--accent);
+    }
+    .status-active svg {
+      color: var(--accent);
+    }
+
+    .card-body {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      border-top: 1px dashed var(--border);
+      border-bottom: 1px dashed var(--border);
+      padding: 12px 0;
+      font-size: 13px;
+    }
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .info-label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .info-value {
+      font-weight: 500;
+    }
+
+    .card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(17, 17, 17, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1100;
+    }
+    .modal-content {
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 12px 32px rgba(17, 17, 17, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .close-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .close-btn:hover {
+      color: var(--fg);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-group label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .form-input {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      font-family: var(--font);
+      font-size: 14px;
+      color: var(--fg);
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--accent);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 32px 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- ROOT REACT MOUNT -->
+  <div id="root"></div>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Standard feather-like SVG Icon set to strictly use product hex color mappings
+    const Icons = {
+      Estimate: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+      ),
+      Environment: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+      ),
+      Profile: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      ),
+      Delete: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+      ),
+      Edit: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      ),
+      Clone: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+      ),
+      Archive: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+      ),
+      Plus: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      ),
+      Check: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      ),
+      Close: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      ),
+      Monitor: () => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+      )
+    };
+
+    function App() {
+      // Manage RBAC role: 'owner' or 'reviewer'
+      const [role, setRole] = useState(() => {
+        return localStorage.getItem('ramp_role') || 'owner';
+      });
+
+      // Maintain list of estimates and environments in localStorage
+      const [estimates, setEstimates] = useState(() => {
+        const saved = localStorage.getItem('ramp_estimates');
+        return saved ? JSON.parse(saved) : [
+          { id: 'EST-8492', title: 'Compute Node Upgrade', status: 'Draft', cost: '$1,200', cpu: '64 cores', ram: '256GB' },
+          { id: 'EST-2301', title: 'GPU Cluster Phase 2', status: 'Approved', cost: '$14,500', cpu: 'GPU Block', ram: '1.2TB' }
+        ];
+      });
+
+      const [environments, setEnvironments] = useState(() => {
+        const saved = localStorage.getItem('ramp_environments');
+        return saved ? JSON.parse(saved) : [
+          { id: 'ENV-7721', title: 'Production Web Serving', status: 'Active', cpu: '128 cores', ram: '512GB', nodeCount: 4 },
+          { id: 'ENV-3942', title: 'ML Training Sandbox', status: 'Active', cpu: 'GPU Active', ram: '256GB', nodeCount: 1 },
+          { id: 'ENV-1049', title: 'Legacy Analytics Node', status: 'Archived', cpu: '16 cores', ram: '64GB', nodeCount: 1 }
+        ];
+      });
+
+      // Modal handling
+      const [editingEstimate, setEditingEstimate] = useState(null);
+      const [editTitle, setEditTitle] = useState('');
+
+      // Persist values on changes
+      useEffect(() => {
+        localStorage.setItem('ramp_role', role);
+      }, [role]);
+
+      useEffect(() => {
+        localStorage.setItem('ramp_estimates', JSON.stringify(estimates));
+      }, [estimates]);
+
+      useEffect(() => {
+        localStorage.setItem('ramp_environments', JSON.stringify(environments));
+      }, [environments]);
+
+      // Actions
+      const handleRoleChange = (newRole) => {
+        setRole(newRole);
+      };
+
+      const deleteEstimate = (id) => {
+        setEstimates(estimates.filter(est => est.id !== id));
+      };
+
+      const cloneEstimate = (est) => {
+        const newId = 'EST-' + Math.floor(1000 + Math.random() * 9000);
+        const cloned = { ...est, id: newId, title: `${est.title} (Clone)` };
+        setEstimates([...estimates, cloned]);
+      };
+
+      const archiveEnvironment = (id) => {
+        setEnvironments(environments.map(env => {
+          if (env.id === id) {
+            return { ...env, status: 'Archived' };
+          }
+          return env;
+        }));
+      };
+
+      const openEditModal = (est) => {
+        setEditingEstimate(est);
+        setEditTitle(est.title);
+      };
+
+      const saveEstimateTitle = () => {
+        setEstimates(estimates.map(est => {
+          if (est.id === editingEstimate.id) {
+            return { ...est, title: editTitle };
+          }
+          return est;
+        }));
+        setEditingEstimate(null);
+      };
+
+      // Navigation helpers (passing IDs and workflows)
+      const startWorkflow = (workflowName) => {
+        const uniqueId = (workflowName === 'request-estimate' ? 'EST-' : 'ENV-') + Math.floor(1000 + Math.random() * 9000);
+        window.location.href = `workflow.html?workflow=${workflowName}&id=${uniqueId}&role=${role}`;
+      };
+
+      const resumeWorkflow = (workflowName, id) => {
+        window.location.href = `workflow.html?workflow=${workflowName}&id=${id}&role=${role}`;
+      };
+
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+          
+          {/* Classification Bar Top */}
+          <div className="classification-bar" data-od-id="classification-top">
+            <span>CIDO RAMP PORTAL // CONTROLLED SPECIFICATION</span>
+            <span className="classification-tag">INTERNAL USE ONLY</span>
+            <span>CURRENT VIEW: {role.toUpperCase()}</span>
+          </div>
+
+          {/* Appbar */}
+          <header className="appbar" data-od-id="appbar">
+            <div className="appbar-leading">
+              <a href="index.html" className="appbar-title" data-od-id="appbar-logo">
+                <Icons.Estimate />
+                <span>Ramp</span>
+              </a>
+            </div>
+            <div className="appbar-actions">
+              {/* Dynamic RBAC Selector */}
+              <div className="role-selector" data-od-id="role-selector-container">
+                <button 
+                  className={`role-btn ${role === 'owner' ? 'active' : ''}`}
+                  onClick={() => handleRoleChange('owner')}
+                  title="Switch to Owner role (full write/edit access)"
+                  data-od-id="role-btn-owner"
+                >
+                  Owner
+                </button>
+                <button 
+                  className={`role-btn ${role === 'reviewer' ? 'active' : ''}`}
+                  onClick={() => handleRoleChange('reviewer')}
+                  title="Switch to Reviewer role (read-only monitoring & references)"
+                  data-od-id="role-btn-reviewer"
+                >
+                  Reviewer
+                </button>
+              </div>
+
+              <a href="#" className="profile-btn" title="View User Profile" data-od-id="profile-button">
+                <Icons.Profile />
+              </a>
+            </div>
+          </header>
+
+          {/* Main Dashboard Panel */}
+          <main className="main-container" data-od-id="dashboard-main">
+            <div className="dashboard-header" data-od-id="dashboard-heading">
+              <div className="header-text">
+                <h1>Compute Environment Manager</h1>
+                <p>Request cost estimates, deploy secure virtual infrastructure, and manage environment lifecycles.</p>
+              </div>
+              <div className="quick-actions">
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => startWorkflow('request-estimate')}
+                  data-od-id="action-start-estimate"
+                >
+                  <Icons.Plus />
+                  <span>Request Cost Estimate</span>
+                </button>
+                <button 
+                  className="btn btn-accent" 
+                  onClick={() => startWorkflow('request-new')}
+                  data-od-id="action-start-new-env"
+                >
+                  <Icons.Plus />
+                  <span>Request New Environment</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Portals Split Layout */}
+            <div className="section-grid">
+              
+              {/* Left Column: Cost Estimates */}
+              <section className="panel" data-od-id="panel-estimates">
+                <div className="panel-header">
+                  <h2 className="panel-title">
+                    <Icons.Estimate />
+                    <span>Cost Estimates</span>
+                  </h2>
+                  <span className="panel-count">{estimates.length}</span>
+                </div>
+
+                <div className="cards-stack">
+                  {estimates.length === 0 ? (
+                    <div className="empty-state">No cost estimates recorded. Start one using the button above.</div>
+                  ) : (
+                    estimates.map(est => (
+                      <div className="portal-card" key={est.id} data-od-id={`estimate-card-${est.id}`}>
+                        <div className="card-top">
+                          <div className="card-meta">
+                            <span className="card-id">{est.id}</span>
+                            <h3 className="card-title">{est.title}</h3>
+                          </div>
+                          <span className="status-badge status-active">
+                            <Icons.Check />
+                            <span>{est.status}</span>
+                          </span>
+                        </div>
+                        
+                        <div className="card-body">
+                          <div className="info-item">
+                            <span className="info-label">CPU Capacity</span>
+                            <span className="info-value">{est.cpu}</span>
+                          </div>
+                          <div className="info-item">
+                            <span className="info-label">RAM Pool</span>
+                            <span className="info-value">{est.ram}</span>
+                          </div>
+                          <div className="info-item" style={{ gridColumn: 'span 2' }}>
+                            <span className="info-label">Monthly Estimate</span>
+                            <span className="info-value" style={{ color: 'var(--accent)', fontWeight: '600' }}>{est.cost}</span>
+                          </div>
+                        </div>
+
+                        <div className="card-actions">
+                          {/* RBAC constraints on Cost Estimate cards */}
+                          {role === 'owner' ? (
+                            <>
+                              <button 
+                                className="btn btn-secondary" 
+                                style={{ padding: '6px 12px', fontSize: '12px' }}
+                                onClick={() => openEditModal(est)}
+                                title="Rename Estimate"
+                                data-od-id={`estimate-rename-${est.id}`}
+                              >
+                                <Icons.Edit />
+                                <span>Rename</span>
+                              </button>
+                              <button 
+                                className="btn btn-secondary" 
+                                style={{ padding: '6px 12px', fontSize: '12px' }}
+                                onClick={() => resumeWorkflow('request-estimate', est.id)}
+                                title="Resume / Edit Estimate details"
+                                data-od-id={`estimate-resume-${est.id}`}
+                              >
+                                <Icons.Plus />
+                                <span>Resume</span>
+                              </button>
+                              <button 
+                                className="btn btn-secondary" 
+                                style={{ padding: '6px 12px', fontSize: '12px' }}
+                                onClick={() => cloneEstimate(est)}
+                                title="Clone Estimate parameters"
+                                data-od-id={`estimate-clone-${est.id}`}
+                              >
+                                <Icons.Clone />
+                                <span>Clone</span>
+                              </button>
+                              <button 
+                                className="btn btn-secondary" 
+                                style={{ padding: '6px 12px', fontSize: '12px', borderColor: 'var(--border)' }}
+                                onClick={() => deleteEstimate(est.id)}
+                                title="Delete Estimate"
+                                data-od-id={`estimate-delete-${est.id}`}
+                              >
+                                <Icons.Delete />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button 
+                                className="btn btn-secondary" 
+                                style={{ padding: '6px 12px', fontSize: '12px' }}
+                                onClick={() => cloneEstimate(est)}
+                                title="Use Estimate as reference for new requests"
+                                data-od-id={`estimate-use-ref-${est.id}`}
+                              >
+                                <Icons.Clone />
+                                <span>Use as Reference</span>
+                              </button>
+                              <button 
+                                className="btn btn-secondary" 
+                                style={{ padding: '6px 12px', fontSize: '12px' }}
+                                onClick={() => resumeWorkflow('request-estimate', est.id)}
+                                title="Monitor estimate details"
+                                data-od-id={`estimate-monitor-${est.id}`}
+                              >
+                                <Icons.Monitor />
+                                <span>Monitor</span>
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
+
+              {/* Right Column: Environments */}
+              <section className="panel" data-od-id="panel-environments">
+                <div className="panel-header">
+                  <h2 className="panel-title">
+                    <Icons.Environment />
+                    <span>Environments</span>
+                  </h2>
+                  <span className="panel-count">{environments.length}</span>
+                </div>
+
+                <div className="cards-stack">
+                  {environments.length === 0 ? (
+                    <div className="empty-state">No deployed environments. Request one using the buttons above.</div>
+                  ) : (
+                    environments.map(env => (
+                      <div className="portal-card" key={env.id} data-od-id={`environment-card-${env.id}`}>
+                        <div className="card-top">
+                          <div className="card-meta">
+                            <span className="card-id">{env.id}</span>
+                            <h3 className="card-title">{env.title}</h3>
+                          </div>
+                          <span className={`status-badge ${env.status === 'Archived' ? 'archived' : 'status-active'}`}>
+                            {env.status === 'Archived' ? <Icons.Archive /> : <Icons.Check />}
+                            <span>{env.status}</span>
+                          </span>
+                        </div>
+                        
+                        <div className="card-body">
+                          <div className="info-item">
+                            <span className="info-label">Allocated CPU</span>
+                            <span className="info-value">{env.cpu}</span>
+                          </div>
+                          <div className="info-item">
+                            <span className="info-label">Active RAM</span>
+                            <span className="info-value">{env.ram}</span>
+                          </div>
+                          <div className="info-item" style={{ gridColumn: 'span 2' }}>
+                            <span className="info-label">Active Instances</span>
+                            <span className="info-value">{env.nodeCount} node{env.nodeCount > 1 ? 's' : ''} running</span>
+                          </div>
+                        </div>
+
+                        <div className="card-actions">
+                          {/* RBAC rules on Environments */}
+                          {role === 'owner' ? (
+                            <>
+                              {env.status !== 'Archived' && (
+                                <>
+                                  <button 
+                                    className="btn btn-secondary" 
+                                    style={{ padding: '6px 12px', fontSize: '12px' }}
+                                    onClick={() => resumeWorkflow('edit', env.id)}
+                                    title="Edit active compute environment variables"
+                                    data-od-id={`env-edit-${env.id}`}
+                                  >
+                                    <Icons.Edit />
+                                    <span>Edit</span>
+                                  </button>
+                                  <button 
+                                    className="btn btn-secondary" 
+                                    style={{ padding: '6px 12px', fontSize: '12px' }}
+                                    onClick={() => resumeWorkflow('archive', env.id)}
+                                    title="Initiate safe deprovisioning sequence"
+                                    data-od-id={`env-archive-${env.id}`}
+                                  >
+                                    <Icons.Archive />
+                                    <span>Archive</span>
+                                  </button>
+                                </>
+                              )}
+                              <button 
+                                className="btn btn-secondary" 
+                                style={{ padding: '6px 12px', fontSize: '12px' }}
+                                onClick={() => resumeWorkflow('request-estimate', 'EST-' + Math.floor(1000 + Math.random() * 9000))}
+                                title="Generate fresh cost projection from these specs"
+                                data-od-id={`env-new-estimate-${env.id}`}
+                              >
+                                <Icons.Estimate />
+                                <span>Create Cost Estimate</span>
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button 
+                                className="btn btn-secondary" 
+                                style={{ padding: '6px 12px', fontSize: '12px' }}
+                                onClick={() => resumeWorkflow('monitor', env.id)}
+                                title="Monitor environment metrics"
+                                data-od-id={`env-monitor-${env.id}`}
+                              >
+                                <Icons.Monitor />
+                                <span>Monitor Environment</span>
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </section>
+
+            </div>
+          </main>
+
+          {/* Edit Estimate Title Modal */}
+          {editingEstimate && (
+            <div className="modal-overlay" onClick={() => setEditingEstimate(null)}>
+              <div className="modal-content" onClick={e => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h3 className="modal-title">Rename Cost Estimate</h3>
+                  <button className="close-btn" onClick={() => setEditingEstimate(null)}>
+                    <Icons.Close />
+                  </button>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="est-title-input">Estimate Title / Description</label>
+                  <input 
+                    type="text" 
+                    id="est-title-input" 
+                    className="form-input" 
+                    value={editTitle}
+                    onChange={e => setEditTitle(e.target.value)}
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                  <button className="btn btn-secondary" onClick={() => setEditingEstimate(null)}>Cancel</button>
+                  <button className="btn" onClick={saveEstimateTitle}>Save</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Classification Bar Bottom */}
+          <footer className="classification-bar bottom" data-od-id="classification-bottom">
+            <span>CIDO RAMP PORTAL // CONTROLLED SPECIFICATION</span>
+            <span className="classification-tag">INTERNAL USE ONLY</span>
+            <span>SYSTEM-WIDE LOGGING CONFIGURED</span>
+          </footer>
+
+        </div>
+      );
+    }
+
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
+  </script>
+</body>
+</html>

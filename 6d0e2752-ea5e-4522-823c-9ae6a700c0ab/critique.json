@@ -1,0 +1,26 @@
+{
+  "kind": "critique-panel",
+  "score": 5,
+  "axes": {
+    "clarity": {
+      "score": 5,
+      "notes": "Highly intuitive developer-oriented step-by-step form navigation with instantaneous visual feedback, validations, and a clean layout."
+    },
+    "hierarchy": {
+      "score": 5,
+      "notes": "Clear visual dominance of the active step container card. Headers, sub-captions, and forms follow natural reading paths."
+    },
+    "typography": {
+      "score": 5,
+      "notes": "Strict tracking applied (negative tracking for titles, positive letter-spacing for uppercase labels). Pure Inter font-stack with compliant leading."
+    },
+    "motion": {
+      "score": 5,
+      "notes": "Subtle UI transition timing on navigation, overlays, and button hovers. Includes active progress loaders."
+    },
+    "brand": {
+      "score": 5,
+      "notes": "100% compliant with the Product design tokens, palette colors, and 8px border posture. Only allowed color hex literals are defined."
+    }
+  }
+}

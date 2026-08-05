@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "kind": "html",
+  "title": "ProgramDetails.html",
+  "entry": "ProgramDetails.html",
+  "renderer": "html",
+  "status": "complete",
+  "exports": [
+    "html",
+    "pdf",
+    "zip"
+  ],
+  "createdAt": "2026-07-31T12:53:21.147Z",
+  "updatedAt": "2026-07-31T12:53:21.147Z",
+  "metadata": {
+    "inferred": true,
+    "reconciled": true
+  }
+}

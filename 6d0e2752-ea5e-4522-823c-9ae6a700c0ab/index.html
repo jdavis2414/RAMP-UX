@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ramp Console — Environment Provisioning</title>
+  <style>
+    /* ==========================================
+       Product Brand & Visual System (Strictly Bound)
+       Allowed Colors: #ffffff, #111111, #1677ff, #f7f8fa, #6b7280, #d9dee7
+       Font: Inter
+       Layout: 8px corner radius, 1px borders
+       ========================================== */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    :root {
+      --bg: #ffffff;
+      --fg: #111111;
+      --accent: #1677ff;
+      --surface: #f7f8fa;
+      --muted: #6b7280;
+      --border: #d9dee7;
+      --font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', 'Arial', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-family);
+    }
+
+    body {
+      background-color: var(--surface);
+      color: var(--fg);
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--surface);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 8px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--muted);
+    }
+
+    /* Layout Wrapper */
+    .app-wrapper {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    /* Sidebar - 8px radius posture, 1px borders */
+    aside.sidebar {
+      width: 260px;
+      background-color: var(--bg);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      flex-shrink: 0;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--fg);
+      letter-spacing: -0.01em;
+    }
+
+    /* Segmented Navigation Control (Manage/Monitor) */
+    .segment-control {
+      display: flex;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .segment-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .segment-btn.active {
+      background-color: var(--bg);
+      color: var(--fg);
+      box-shadow: 0 1px 3px var(--border);
+    }
+
+    /* Sidebar Menu items */
+    .menu-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .menu-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      padding-left: 8px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ffffff; /* Transparent using background */
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background-color: var(--surface);
+      color: var(--fg);
+    }
+
+    .menu-item.active {
+      background-color: var(--surface);
+      color: var(--fg);
+      border-color: var(--border);
+      font-weight: 600;
+    }
+
+    .menu-item.active .menu-icon {
+      color: var(--accent);
+    }
+
+    .menu-icon {
+      width: 18px;
+      height: 18px;
+      color: var(--muted);
+      transition: color 0.15s;
+    }
+
+    /* Main Console Surface */
+    main.main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--surface);
+      overflow-y: auto;
+    }
+
+    /* Top Navigation Header */
+    header.header-bar {
+      height: 64px;
+      background-color: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .breadcrumb-separator {
+      color: var(--border);
+    }
+
+    .breadcrumb-current {
+      color: var(--fg);
+      font-weight: 500;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Search Bar */
+    .search-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px 8px 36px;
+      font-size: 13px;
+      color: var(--fg);
+      width: 220px;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      background-color: var(--bg);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      width: 16px;
+      height: 16px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    /* Profile / Icons */
+    .utility-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--fg);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      background-color: var(--bg);
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .utility-icon-btn:hover {
+      background-color: var(--surface);
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 8px;
+      height: 8px;
+      border-radius: 8px;
+      background-color: var(--accent);
+      border: 1px solid var(--bg);
+    }
+
+    .profile-trigger {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 8px;
+      transition: background-color 0.15s;
+    }
+
+    .profile-trigger:hover {
+      background-color: var(--surface);
+    }
+
+    .avatar-placeholder {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    /* Page Workspace Contents */
+    .workspace-container {
+      padding: 40px;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .title-area {
+      margin-bottom: 32px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--fg);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      font-size: 15px;
+      color: var(--muted);
+      max-width: 65ch;
+    }
+
+    /* Stepper Header (Timeline) */
+    .stepper-timeline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 40px;
+      margin-bottom: 24px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      flex: 1;
+    }
+
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: calc(100% - 10px);
+      width: calc(100% - 40px);
+      height: 1px;
+      background-color: var(--border);
+      z-index: 1;
+    }
+
+    .step-item.completed:not(:last-child)::after {
+      background-color: var(--accent);
+    }
+
+    .step-indicator {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background-color: var(--bg);
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: all 0.2s ease;
+    }
+
+    .step-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      z-index: 2;
+      transition: color 0.2s ease;
+    }
+
+    /* Stepper States style overrides */
+    .step-item.active .step-indicator {
+      border-color: var(--accent);
+      background-color: var(--accent);
+      color: #ffffff; /* Allowed */
+    }
+
+    .step-item.active .step-label {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    .step-item.completed .step-indicator {
+      border-color: var(--accent);
+      background-color: var(--surface);
+      color: var(--accent);
+    }
+
+    .step-item.completed .step-label {
+      color: var(--fg);
+    }
+
+    /* Active Step Container Card */
+    .card-container {
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .step-pane {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .step-pane.active {
+      display: flex;
+    }
+
+    .pane-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--fg);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form Styles */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .form-grid.single-col {
+      grid-template-columns: 1fr;
+      max-width: 500px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    label.field-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .field-hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: -4px;
+    }
+
+    .input-control {
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--fg);
+      outline: none;
+      transition: all 0.15s ease;
+      width: 100%;
+    }
+
+    .input-control:focus {
+      border-color: var(--accent);
+    }
+
+    .input-control::placeholder {
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    /* Invalid Input Border Override */
+    .input-control.invalid {
+      border-color: var(--fg); /* fallback to high-signal dark as red is forbidden */
+    }
+
+    .error-text {
+      font-size: 12px;
+      color: var(--fg);
+      font-weight: 500;
+      display: none;
+    }
+
+    .input-control.invalid + .error-text {
+      display: block;
+    }
+
+    /* Custom Selection Cards (Step 2 Resource Tier) */
+    .tier-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .tier-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      background-color: var(--bg);
+      position: relative;
+    }
+
+    .tier-card:hover {
+      background-color: var(--surface);
+    }
+
+    .tier-card.selected {
+      border-color: var(--accent);
+      background-color: var(--surface);
+    }
+
+    .tier-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .tier-name {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--fg);
+    }
+
+    .tier-spec {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .tier-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+    }
+
+    /* Toggle Switch Component */
+    .toggle-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background-color: var(--border);
+      border-radius: 24px;
+      transition: background-color 0.2s ease;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: var(--bg);
+      transition: transform 0.2s ease;
+    }
+
+    input.toggle-checkbox {
+      display: none;
+    }
+
+    input.toggle-checkbox:checked + .toggle-switch {
+      background-color: var(--accent);
+    }
+
+    input.toggle-checkbox:checked + .toggle-switch::after {
+      transform: translateX(20px);
+    }
+
+    /* Template Dialog Trigger Block */
+    .template-box {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .template-box-content {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .template-box-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--fg);
+    }
+
+    .template-box-desc {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Form Button Bar */
+    .action-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 16px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      margin-top: auto;
+    }
+
+    /* Button Tokens */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      outline: none;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #ffffff; /* Allowed */
+      border: 1px solid var(--accent);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background-color: var(--bg);
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--surface);
+      border-color: var(--muted);
+    }
+
+    .btn-text {
+      background: none;
+      border: none;
+      color: var(--muted);
+    }
+
+    .btn-text:hover {
+      color: var(--fg);
+    }
+
+    .btn-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Review details spec */
+    .review-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .review-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .review-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .review-value {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--fg);
+    }
+
+    /* Interactive Preflight Checklist */
+    .checklist-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .checklist-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--border);
+    }
+
+    .checklist-item.active .checklist-dot {
+      background-color: var(--accent);
+    }
+
+    /* Provisioning State (Success/Loading) */
+    .state-pane {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 40px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .state-pane.active {
+      display: flex;
+    }
+
+    .state-spinner {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 24px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .success-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background-color: var(--surface);
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      margin-bottom: 24px;
+    }
+
+    /* Dialog / Modal Custom Component */
+    .dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: var(--fg);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      transition: opacity 0.2s ease;
+    }
+
+    .dialog-overlay.open {
+      opacity: 0.35;
+      pointer-events: auto;
+    }
+
+    .dialog-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -45%);
+      width: 540px;
+      max-width: 90%;
+      background-color: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px var(--border);
+      z-index: 101;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+    }
+
+    .dialog-container.open {
+      opacity: 1;
+      transform: translate(-50%, -50%);
+      pointer-events: auto;
+    }
+
+    .dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .dialog-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--fg);
+    }
+
+    .dialog-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      transition: background-color 0.15s;
+    }
+
+    .dialog-close:hover {
+      background-color: var(--surface);
+      color: var(--fg);
+    }
+
+    .dialog-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .dialog-option-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      transition: all 0.15s ease;
+      background-color: var(--bg);
+    }
+
+    .dialog-option-card:hover {
+      background-color: var(--surface);
+    }
+
+    .dialog-option-card.selected {
+      border-color: var(--accent);
+      background-color: var(--surface);
+    }
+
+    .dialog-option-icon {
+      width: 24px;
+      height: 24px;
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .dialog-option-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .dialog-option-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--fg);
+    }
+
+    .dialog-option-desc {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .dialog-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      background-color: var(--surface);
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+
+    /* Toast Notification System */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 1000;
+    }
+
+    .toast {
+      background-color: var(--fg);
+      color: var(--bg);
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 4px 12px var(--fg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: toastIn 0.25s ease forwards;
+    }
+
+    @keyframes toastIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .toast-icon {
+      width: 16px;
+      height: 16px;
+      color: var(--accent);
+    }
+
+    .toast.toast-error .toast-icon {
+      color: var(--bg);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper" data-od-id="app-wrapper">
+
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" data-od-id="sidebar-navigation">
+      <div class="brand-section">
+        <svg class="brand-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+        </svg>
+        <span class="brand-title">Ramp</span>
+      </div>
+
+      <!-- Segment Toggle -->
+      <div class="segment-control" data-od-id="category-selector">
+        <button class="segment-btn active" onclick="switchCategory('manage')">Manage</button>
+        <button class="segment-btn" onclick="switchCategory('monitor')">Monitor</button>
+      </div>
+
+      <!-- Sidebar ListView -->
+      <div class="menu-group" data-od-id="navigation-group">
+        <span class="menu-label">Console</span>
+        <div class="menu-item active" onclick="selectMenuItem('request')">
+          <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Request
+        </div>
+        <div class="menu-item" onclick="selectMenuItem('modify')">
+          <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+          Modify
+        </div>
+        <div class="menu-item" onclick="selectMenuItem('archive')">
+          <svg class="menu-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
+          </svg>
+          Archive
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <main class="main-content" data-od-id="main-workspace">
+
+      <!-- Header / Top Bar -->
+      <header class="header-bar" data-od-id="header-bar">
+        <div class="header-left">
+          <div class="breadcrumbs">
+            <span>Ramp Console</span>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current">Request Environment</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <!-- Search -->
+          <div class="search-wrapper">
+            <svg class="search-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <input type="text" class="search-input" placeholder="Search resources...">
+          </div>
+
+          <!-- Alert Badge -->
+          <button class="utility-icon-btn">
+            <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+            <span class="badge-dot"></span>
+          </button>
+
+          <!-- User Icon / trigger -->
+          <div class="profile-trigger">
+            <div class="avatar-placeholder">U</div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Canvas -->
+      <div class="workspace-container" data-od-id="workspace-container">
+        <div class="title-area">
+          <h1 class="page-title">Request new Environment</h1>
+          <p class="page-subtitle">Configure and spin up isolated cloud clusters, sandbox environments, and test pipelines on demand.</p>
+        </div>
+
+        <!-- Stepper Navigation -->
+        <div class="stepper-timeline" data-od-id="stepper-progress">
+          <div class="step-item active" id="timeline-step-1">
+            <div class="step-indicator">1</div>
+            <span class="step-label">Basic Details</span>
+          </div>
+          <div class="step-item" id="timeline-step-2">
+            <div class="step-indicator">2</div>
+            <span class="step-label">Resources</span>
+          </div>
+          <div class="step-item" id="timeline-step-3">
+            <div class="step-indicator">3</div>
+            <span class="step-label">Provision</span>
+          </div>
+        </div>
+
+        <!-- Form Card Container -->
+        <div class="card-container" data-od-id="form-card-container">
+
+          <!-- STEP 1: Basic Details -->
+          <div class="step-pane active" id="pane-step-1">
+            <h2 class="pane-title">Basic Details</h2>
+
+            <!-- Template Quick Choice Box -->
+            <div class="template-box" data-od-id="template-quick-box">
+              <div class="template-box-content">
+                <span class="template-box-title">Start with an Environment Template</span>
+                <span class="template-box-desc">Accelerate cluster setup with verified presets for development, testing, or mirroring production.</span>
+              </div>
+              <button class="btn btn-secondary" onclick="openTemplateDialog()" data-od-id="open-dialog-btn">
+                <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                Open Dialog
+              </button>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="field-label" for="env-identifier">Environment Identifier</label>
+                <input type="text" id="env-identifier" class="input-control" placeholder="e.g. ramp-sandbox-dev">
+                <span class="field-hint">Unique lowercase alphanumeric name.</span>
+                <span class="error-text">Please enter a valid lowercase alphanumeric identifier.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="field-label" for="env-region">Platform Region</label>
+                <select id="env-region" class="input-control">
+                  <option value="">Select Cluster Region</option>
+                  <option value="us-east-1">US East (N. Virginia)</option>
+                  <option value="eu-west-1">EU West (Ireland)</option>
+                  <option value="ap-east-1">AP East (Tokyo)</option>
+                </select>
+                <span class="error-text">Please select a deployment cluster region.</span>
+              </div>
+
+              <div class="form-group full-width">
+                <label class="field-label" for="expiry-date">Target Expiry Date</label>
+                <input type="date" id="expiry-date" class="input-control">
+                <span class="field-hint">The sandbox will automatically archive at midnight of this date.</span>
+                <span class="error-text">Please select a valid future expiry date.</span>
+              </div>
+            </div>
+
+            <div class="action-bar">
+              <button class="btn btn-primary" onclick="goToStep(2)">
+                Next Step
+                <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2: Resource Allocation -->
+          <div class="step-pane" id="pane-step-2">
+            <h2 class="pane-title">Resource Allocation</h2>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+              <label class="field-label">Select Resource Allocation Tier</label>
+            </div>
+
+            <div class="tier-cards-grid" data-od-id="cluster-tier-selector">
+              <div class="tier-card selected" onclick="selectTier(this, 'developer')" id="tier-dev">
+                <div class="tier-card-header">
+                  <span class="tier-name">Developer sandbox</span>
+                  <span class="tier-tag">Standard</span>
+                </div>
+                <p class="tier-spec">1x vCPU Allocation</p>
+                <p class="tier-spec">2GB Managed RAM</p>
+              </div>
+
+              <div class="tier-card" onclick="selectTier(this, 'cluster')" id="tier-stage">
+                <div class="tier-card-header">
+                  <span class="tier-name">Staging cluster</span>
+                  <span class="tier-tag">Medium</span>
+                </div>
+                <p class="tier-spec">2x vCPU Allocation</p>
+                <p class="tier-spec">4GB Managed RAM</p>
+              </div>
+
+              <div class="tier-card" onclick="selectTier(this, 'mirror')" id="tier-prod">
+                <div class="tier-card-header">
+                  <span class="tier-name">Production mirror</span>
+                  <span class="tier-tag">Enterprise</span>
+                </div>
+                <p class="tier-spec">4x vCPU Allocation</p>
+                <p class="tier-spec">16GB Dedicated RAM</p>
+              </div>
+            </div>
+
+            <div class="form-grid single-col">
+              <div class="form-group">
+                <label class="field-label" for="db-integration">Database Integration</label>
+                <div class="toggle-wrapper" onclick="toggleDatabase()">
+                  <input type="checkbox" id="db-integration" class="toggle-checkbox">
+                  <div class="toggle-switch"></div>
+                  <span id="db-toggle-label" class="field-hint">Database Integration (Inactive)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="action-bar">
+              <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+              <button class="btn btn-primary" onclick="goToStep(3)">
+                Next Step
+                <svg class="btn-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 3: Review & Submit -->
+          <div class="step-pane" id="pane-step-3">
+            <h2 class="pane-title">Review & Submit</h2>
+
+            <!-- Review Summary Board -->
+            <div class="review-grid" data-od-id="review-board">
+              <div class="review-item">
+                <span class="review-label">Identifier</span>
+                <span class="review-value" id="review-val-identifier">ramp-sandbox-dev</span>
+              </div>
+              <div class="review-item">
+                <span class="review-label">Deployment Region</span>
+                <span class="review-value" id="review-val-region">US East (N. Virginia)</span>
+              </div>
+              <div class="review-item">
+                <span class="review-label">Resource Allocation Tier</span>
+                <span class="review-value" id="review-val-tier">Developer Sandbox</span>
+              </div>
+              <div class="review-item">
+                <span class="review-label">Integration Database</span>
+                <span class="review-value" id="review-val-database">Disabled</span>
+              </div>
+              <div class="review-item" style="grid-column: span 2;">
+                <span class="review-label">Target Expiry Date</span>
+                <span class="review-value" id="review-val-expiry">November 10, 2026</span>
+              </div>
+            </div>
+
+            <!-- Pre-flight checks -->
+            <div class="checklist-group">
+              <div class="checklist-item active" id="chk-quota">
+                <span class="checklist-dot"></span>
+                <span>Verification: Account quota allocation check</span>
+              </div>
+              <div class="checklist-item active" id="chk-iam">
+                <span class="checklist-dot"></span>
+                <span>Verification: Ramp IAM access confirmation</span>
+              </div>
+            </div>
+
+            <div class="action-bar">
+              <button class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+              <button class="btn btn-primary" onclick="provisionEnvironment()" data-od-id="submit-btn">
+                Provision Environment
+              </button>
+            </div>
+          </div>
+
+          <!-- Provisioning State -->
+          <div class="state-pane" id="pane-provisioning">
+            <div class="state-spinner"></div>
+            <h2 class="pane-title" style="margin-bottom: 8px;">Provisioning Environment</h2>
+            <p class="page-subtitle" style="text-align: center;">Allocating resources, spinning up cloud nodes, and configuring isolated networking configurations on Ramp...</p>
+          </div>
+
+          <!-- Success State -->
+          <div class="state-pane" id="pane-success">
+            <div class="success-badge">
+              <svg class="btn-icon" style="width: 28px; height: 28px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path>
+              </svg>
+            </div>
+            <h2 class="pane-title" style="margin-bottom: 8px;">Provision Successful</h2>
+            <p class="page-subtitle" style="text-align: center; margin-bottom: 24px;">Your environment is provisioned and ready for development. Safe connection configurations are generated.</p>
+            <div class="btn-row" style="display: flex; gap: 12px;">
+              <button class="btn btn-primary" onclick="resetForm()">Request Another</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Dialog / Modal Template Overlay -->
+  <div class="dialog-overlay" id="template-overlay"></div>
+  <div class="dialog-container" id="template-dialog" data-od-id="modal-overlay">
+    <div class="dialog-header">
+      <span class="dialog-title">Select Environment Template</span>
+      <button class="dialog-close" onclick="closeTemplateDialog()">
+        <svg style="width: 16px; height: 16px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <div class="dialog-option-card selected" onclick="selectTemplateOption(this, 'dev')" id="opt-dev">
+        <svg class="dialog-option-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+        </svg>
+        <div class="dialog-option-info">
+          <span class="dialog-option-title">Developer Sandbox Preset</span>
+          <span class="dialog-option-desc">Fast, single-instance sandbox deployment with a preconfigured database and automatic expiry.</span>
+        </div>
+      </div>
+
+      <div class="dialog-option-card" onclick="selectTemplateOption(this, 'stage')" id="opt-stage">
+        <svg class="dialog-option-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+        </svg>
+        <div class="dialog-option-info">
+          <span class="dialog-option-title">Staging Cluster Preset</span>
+          <span class="dialog-option-desc">Multi-node cluster environment mirroring testing pipelines. Ideal for pre-deployment checks.</span>
+        </div>
+      </div>
+
+      <div class="dialog-option-card" onclick="selectTemplateOption(this, 'prod')" id="opt-prod">
+        <svg class="dialog-option-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+        <div class="dialog-option-info">
+          <span class="dialog-option-title">Production Mirror Preset</span>
+          <span class="dialog-option-desc">Premium high-performance setup with dedicated databases, load balancers, and full replica nodes.</span>
+        </div>
+      </div>
+    </div>
+    <div class="dialog-footer">
+      <button class="btn btn-secondary" onclick="closeTemplateDialog()">Cancel</button>
+      <button class="btn btn-primary" onclick="applySelectedTemplate()">Apply Template</button>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    // State management
+    let currentStep = 1;
+    let selectedTier = 'developer';
+    let databaseIntegrated = false;
+    let selectedTemplate = 'dev';
+
+    // Switch Manage/Monitor Category
+    function switchCategory(category) {
+      document.querySelectorAll('.segment-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase() === category) {
+          btn.classList.add('active');
+        }
+      });
+      showToast(`Switched workspace views to ${category.toUpperCase()}`);
+    }
+
+    // List selection highlight
+    function selectMenuItem(itemId) {
+      document.querySelectorAll('.menu-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.textContent.trim().toLowerCase() === itemId) {
+          item.classList.add('active');
+        }
+      });
+      showToast(`Opened navigation console for ${itemId.toUpperCase()}`);
+    }
+
+    // Modal dialogue controllers
+    function openTemplateDialog() {
+      document.getElementById('template-overlay').classList.add('open');
+      document.getElementById('template-dialog').classList.add('open');
+    }
+
+    function closeTemplateDialog() {
+      document.getElementById('template-overlay').classList.remove('open');
+      document.getElementById('template-dialog').classList.remove('open');
+    }
+
+    function selectTemplateOption(card, templateType) {
+      document.querySelectorAll('.dialog-option-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedTemplate = templateType;
+    }
+
+    // Auto populate the step 1 fields based on template apply
+    function applySelectedTemplate() {
+      const identifierInput = document.getElementById('env-identifier');
+      const regionSelect = document.getElementById('env-region');
+      const expiryInput = document.getElementById('expiry-date');
+
+      // Calculate future dates (30 days from now)
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + 30);
+      const dateString = targetDate.toISOString().split('T')[0];
+
+      if (selectedTemplate === 'dev') {
+        identifierInput.value = 'ramp-sandbox-dev';
+        regionSelect.value = 'us-east-1';
+        expiryInput.value = dateString;
+        selectedTier = 'developer';
+        updateTierSelection('tier-dev');
+      } else if (selectedTemplate === 'stage') {
+        identifierInput.value = 'ramp-staging-cluster';
+        regionSelect.value = 'eu-west-1';
+        expiryInput.value = dateString;
+        selectedTier = 'cluster';
+        updateTierSelection('tier-stage');
+      } else if (selectedTemplate === 'prod') {
+        identifierInput.value = 'ramp-prod-mirror';
+        regionSelect.value = 'ap-east-1';
+        expiryInput.value = dateString;
+        selectedTier = 'mirror';
+        updateTierSelection('tier-prod');
+      }
+
+      closeTemplateDialog();
+      showToast('Applied Environment Preset Template');
+    }
+
+    // Custom tier selector logic
+    function selectTier(card, tier) {
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedTier = tier;
+    }
+
+    function updateTierSelection(cardId) {
+      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
+      document.getElementById(cardId).classList.add('selected');
+    }
+
+    // Database Integration Toggle
+    function toggleDatabase() {
+      const checkbox = document.getElementById('db-integration');
+      checkbox.checked = !checkbox.checked;
+      databaseIntegrated = checkbox.checked;
+      document.getElementById('db-toggle-label').textContent = databaseIntegrated ? 'Database Integration (Active)' : 'Database Integration (Inactive)';
+    }
+
+    // Custom Toast Notification system
+    function showToast(message, isError = false) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${isError ? 'toast-error' : ''}`;
+      
+      const icon = `<svg class="toast-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>`;
+
+      toast.innerHTML = `${icon}<span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'toastIn 0.25s ease reverse forwards';
+        setTimeout(() => toast.remove(), 250);
+      }, 3000);
+    }
+
+    // Form Navigation and Validation Checking
+    function goToStep(step) {
+      // Step Validation logic
+      if (step > currentStep) {
+        if (currentStep === 1) {
+          const identifierInput = document.getElementById('env-identifier');
+          const regionSelect = document.getElementById('env-region');
+          const expiryInput = document.getElementById('expiry-date');
+
+          let isValid = true;
+
+          // Alphanumeric lowercase checks
+          const idPattern = /^[a-z0-9-_]+$/;
+          if (!idPattern.test(identifierInput.value)) {
+            identifierInput.classList.add('invalid');
+            isValid = false;
+          } else {
+            identifierInput.classList.remove('invalid');
+          }
+
+          if (!regionSelect.value) {
+            regionSelect.classList.add('invalid');
+            isValid = false;
+          } else {
+            regionSelect.classList.remove('invalid');
+          }
+
+          if (!expiryInput.value) {
+            expiryInput.classList.add('invalid');
+            isValid = false;
+          } else {
+            expiryInput.classList.remove('invalid');
+          }
+
+          if (!isValid) {
+            showToast('Form validation failed. Please check required fields.', true);
+            return;
+          }
+        }
+      }
+
+      currentStep = step;
+
+      // Update Step indicators
+      document.querySelectorAll('.step-item').forEach((item, index) => {
+        item.classList.remove('active', 'completed');
+        if (index + 1 < currentStep) {
+          item.classList.add('completed');
+        } else if (index + 1 === currentStep) {
+          item.classList.add('active');
+        }
+      });
+
+      // Update active panel
+      document.querySelectorAll('.step-pane').forEach((pane, index) => {
+        pane.classList.remove('active');
+        if (index + 1 === currentStep) {
+          pane.classList.add('active');
+        }
+      });
+
+      // If review step, update review contents
+      if (currentStep === 3) {
+        document.getElementById('review-val-identifier').textContent = document.getElementById('env-identifier').value;
+        const regionText = document.getElementById('env-region').options[document.getElementById('env-region').selectedIndex].text;
+        document.getElementById('review-val-region').textContent = regionText;
+        
+        let tierLabel = 'Developer Sandbox';
+        if (selectedTier === 'cluster') tierLabel = 'Staging Cluster';
+        if (selectedTier === 'mirror') tierLabel = 'Production Mirror';
+        document.getElementById('review-val-tier').textContent = tierLabel;
+
+        document.getElementById('review-val-database').textContent = databaseIntegrated ? 'Enabled (PostgreSQL 15)' : 'Disabled';
+        
+        const dateObj = new Date(document.getElementById('expiry-date').value);
+        const formattedDate = dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('review-val-expiry').textContent = formattedDate;
+      }
+    }
+
+    // Provisioning action (spinner triggers)
+    function provisionEnvironment() {
+      // Switch pane to provisioning state
+      document.getElementById('pane-step-3').classList.remove('active');
+      document.getElementById('pane-provisioning').classList.add('active');
+
+      // Mock allocation process
+      setTimeout(() => {
+        document.getElementById('pane-provisioning').classList.remove('active');
+        document.getElementById('pane-success').classList.add('active');
+        showToast('Environment initialized successfully!');
+      }, 2500);
+    }
+
+    // Reset Form for another setup
+    function resetForm() {
+      document.getElementById('pane-success').classList.remove('active');
+      document.getElementById('env-identifier').value = '';
+      document.getElementById('env-region').value = '';
+      document.getElementById('expiry-date').value = '';
+      document.getElementById('db-integration').checked = false;
+      databaseIntegrated = false;
+      document.getElementById('db-toggle-label').textContent = 'Database Integration (Inactive)';
+      
+      currentStep = 1;
+      goToStep(1);
+    }
+  </script>
+</body>
+</html>

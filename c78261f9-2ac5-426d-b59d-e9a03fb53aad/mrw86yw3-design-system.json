@@ -1,0 +1,131 @@
+{
+  "name": "Northrop Grumman Design System",
+  "version": "1.0.0",
+  "description": "Extracted design system tokens and component specs from Northrop Grumman web design references.",
+  "tokens": {
+    "colors": {
+      "bg": {
+        "value": "#ffffff",
+        "oklch": "oklch(100% 0 0)",
+        "role": "Light background canvas"
+      },
+      "surface": {
+        "value": "#090a0f",
+        "oklch": "oklch(12% 0.01 260)",
+        "role": "Dark header and primary hero surface"
+      },
+      "navyBanner": {
+        "value": "#00205b",
+        "oklch": "oklch(22% 0.12 260)",
+        "role": "Secondary navy accent section background"
+      },
+      "fg": {
+        "value": "#111111",
+        "oklch": "oklch(12% 0 0)",
+        "role": "Primary body copy color on light surfaces"
+      },
+      "fgInverted": {
+        "value": "#ffffff",
+        "oklch": "oklch(100% 0 0)",
+        "role": "Text color on dark and navy surfaces"
+      },
+      "muted": {
+        "value": "#666666",
+        "oklch": "oklch(50% 0 0)",
+        "role": "Breadcrumbs, metadata, and captions"
+      },
+      "border": {
+        "value": "#e2e2e2",
+        "oklch": "oklch(88% 0 0)",
+        "role": "Subtle hair-line dividers and input borders"
+      },
+      "accent": {
+        "value": "#0033cc",
+        "oklch": "oklch(42% 0.22 264)",
+        "role": "High-signal CTA buttons and active pagination dots"
+      },
+      "accentHover": {
+        "value": "#002699",
+        "oklch": "oklch(35% 0.22 264)",
+        "role": "Button hover and active interaction state"
+      }
+    },
+    "typography": {
+      "fontFamilies": {
+        "display": "Inter, 'Helvetica Neue', Arial, sans-serif",
+        "body": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        "mono": "ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', monospace"
+      },
+      "sizes": {
+        "display1": { "fontSize": "42px", "lineHeight": "1.15", "fontWeight": "800", "letterSpacing": "-0.02em" },
+        "h1": { "fontSize": "32px", "lineHeight": "1.2", "fontWeight": "700", "letterSpacing": "-0.01em" },
+        "h2": { "fontSize": "24px", "lineHeight": "1.3", "fontWeight": "700" },
+        "h3": { "fontSize": "20px", "lineHeight": "1.4", "fontWeight": "600" },
+        "body": { "fontSize": "16px", "lineHeight": "1.5", "fontWeight": "400" },
+        "small": { "fontSize": "13px", "lineHeight": "1.4", "fontWeight": "500", "letterSpacing": "0.02em" },
+        "meta": { "fontSize": "11px", "lineHeight": "1.4", "fontWeight": "600", "letterSpacing": "0.08em", "textTransform": "uppercase" }
+      }
+    },
+    "spacing": {
+      "xs": "4px",
+      "sm": "8px",
+      "md": "16px",
+      "lg": "24px",
+      "xl": "40px",
+      "2xl": "64px"
+    },
+    "borders": {
+      "radius": "0px",
+      "width": "1px",
+      "style": "solid"
+    },
+    "motifs": {
+      "bracketFrame": {
+        "borderTop": "4px solid currentColor",
+        "borderRight": "4px solid currentColor",
+        "width": "24px",
+        "height": "24px"
+      }
+    }
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "bg": "#0033cc",
+        "fg": "#ffffff",
+        "borderRadius": "0px",
+        "padding": "12px 24px",
+        "fontWeight": "600",
+        "textTransform": "none"
+      }
+    },
+    "input": {
+      "search": {
+        "bg": "transparent",
+        "border": "1px solid #e2e2e2",
+        "borderRadius": "0px",
+        "padding": "10px 16px",
+        "fg": "#111111"
+      }
+    },
+    "heroCarousel": {
+      "layout": "split 50/50",
+      "darkBg": "#090a0f",
+      "imageSide": "right",
+      "controls": {
+        "arrows": "white line chevrons",
+        "pagination": "dots with active blue pill"
+      }
+    },
+    "breadcrumb": {
+      "fg": "#ffffff",
+      "separator": ">",
+      "fontSize": "14px"
+    },
+    "subnav": {
+      "bg": "#f4f4f6",
+      "activeColor": "#0033cc",
+      "linkGap": "32px"
+    }
+  }
+}

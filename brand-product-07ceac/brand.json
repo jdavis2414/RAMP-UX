@@ -1,0 +1,113 @@
+{
+  "name": "Product",
+  "tagline": "Fonts, logos and assets: colors.png",
+  "description": "Fonts, logos and assets: colors.png",
+  "sourceUrl": "designmd://product",
+  "logo": {
+    "primary": null,
+    "alternates": [],
+    "notes": "No logo supplied in pasted DESIGN.md."
+  },
+  "colors": [
+    {
+      "role": "background",
+      "hex": "#ffffff",
+      "oklch": "",
+      "name": "Background",
+      "usage": "page canvas"
+    },
+    {
+      "role": "foreground",
+      "hex": "#111111",
+      "oklch": "",
+      "name": "Foreground",
+      "usage": "body text and headings"
+    },
+    {
+      "role": "accent",
+      "hex": "#1677ff",
+      "oklch": "",
+      "name": "Accent",
+      "usage": "primary actions and emphasis"
+    },
+    {
+      "role": "surface",
+      "hex": "#f7f8fa",
+      "oklch": "",
+      "name": "Surface",
+      "usage": "cards and panels"
+    },
+    {
+      "role": "muted",
+      "hex": "#6b7280",
+      "oklch": "",
+      "name": "Muted",
+      "usage": "secondary text and metadata"
+    },
+    {
+      "role": "border",
+      "hex": "#d9dee7",
+      "oklch": "",
+      "name": "Border",
+      "usage": "rules and dividers"
+    }
+  ],
+  "typography": {
+    "display": {
+      "family": "Inter",
+      "fallbacks": [
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "Helvetica Neue",
+        "Arial",
+        "sans-serif"
+      ],
+      "weights": [
+        400,
+        700
+      ]
+    },
+    "body": {
+      "family": "Inter",
+      "fallbacks": [
+        "system-ui",
+        "-apple-system",
+        "Segoe UI",
+        "Helvetica Neue",
+        "Arial",
+        "sans-serif"
+      ],
+      "weights": [
+        400,
+        700
+      ]
+    }
+  },
+  "voice": {
+    "adjectives": [],
+    "tone": "Fonts, logos and assets: colors.png",
+    "messagingPillars": [
+      "Fonts, logos and assets: colors.png"
+    ],
+    "vocabulary": {
+      "use": [],
+      "avoid": []
+    }
+  },
+  "imagery": {
+    "style": "",
+    "subjects": [],
+    "treatment": "",
+    "avoid": [],
+    "samples": []
+  },
+  "layout": {
+    "radius": "8px",
+    "borderWeight": "1px",
+    "spacing": "8px baseline grid",
+    "postureRules": [
+      "Component kit should cover: Button, Card, Form, Navigation."
+    ]
+  }
+}
