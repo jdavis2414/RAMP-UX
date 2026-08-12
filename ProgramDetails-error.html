@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ramp — Enter Program Details</title>
+  <style>
+    /* ── Brand token layer (from brand-product kit) ─────────────────────── */
+    :root {
+      --brand-color-primary:          #1677ff;
+      --brand-color-primary-bg:       #e6f4ff;
+      --brand-color-primary-bg-hover: #bae0ff;
+      --brand-color-primary-border:   #91caff;
+      --brand-color-primary-hover:    #4096ff;
+      --brand-color-primary-active:   #0958d9;
+      --brand-color-primary-text:     #002c8c;
+      --brand-color-error:            #ff4d4f;
+      --brand-color-error-bg:         #fff2f0;
+      --brand-color-error-border:     #ffccc7;
+      --brand-color-error-hover:      #ff7875;
+      --brand-color-success:          #52c41a;
+      --brand-color-text:             #111111;
+      --brand-color-text-secondary:   #6b7280;
+      --brand-color-text-tertiary:    #949494;
+      --brand-color-fill:             #dbdbdb;
+      --brand-color-fill-quaternary:  #fafafa;
+      --brand-color-bg-layout:        #f7f8fa;
+      --brand-color-bg-container:     #ffffff;
+      --brand-color-border:           #d9dee7;
+      --brand-color-border-secondary: #f1f1f1;
+
+      --brand-font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --brand-font-family-mono: ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', monospace;
+      --brand-font-size:          14px;
+      --brand-font-size-sm:       12px;
+      --brand-font-size-lg:       18px;
+      --brand-font-weight-strong: 600;
+
+      --brand-border-radius:    8px;
+      --brand-border-radius-sm: 5px;
+      --brand-border-radius-lg: 10px;
+      --brand-line-width:       1px;
+
+      --brand-control-height:    32px;
+      --brand-control-height-sm: 24px;
+      --brand-control-height-lg: 40px;
+
+      --brand-size-xxs: 4px;
+      --brand-size-xs:  8px;
+      --brand-size-sm:  12px;
+      --brand-size:     16px;
+      --brand-size-md:  20px;
+      --brand-size-lg:  24px;
+      --brand-size-xl:  32px;
+
+      --brand-motion-duration-mid: 0.2s;
+      --brand-motion-ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--brand-color-bg-container);
+      color: var(--brand-color-text);
+      font-family: var(--brand-font-family);
+      font-size: 15px;
+      line-height: 1.5;
+      padding-top: 28px;
+      padding-bottom: 28px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Classification bars ─────────────────────────────────────────────── */
+    .classification-bar {
+      position: fixed;
+      left: 0; right: 0;
+      height: 28px;
+      background-color: #006622;
+      color: #ffffff;
+      font-family: var(--brand-font-family-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+    }
+    .classification-bar.top  { top: 0; }
+    .classification-bar.bottom {
+      bottom: 0; top: auto;
+      border-top: var(--brand-line-width) solid var(--brand-color-border);
+      border-bottom: none;
+    }
+
+    /* ── App bar ─────────────────────────────────────────────────────────── */
+    .appbar {
+      height: 56px;
+      background-color: var(--brand-color-text);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      flex-shrink: 0;
+    }
+    .appbar-brand {
+      display: flex; align-items: center; gap: var(--brand-size-sm);
+      text-decoration: none; color: #ffffff;
+    }
+    .appbar-logo-mark {
+      width: 28px; height: 28px;
+      background-color: #ffffff;
+      color: var(--brand-color-text);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--brand-font-family);
+      font-weight: 800; font-size: 14px;
+      border-radius: var(--brand-border-radius);
+    }
+    .appbar-title {
+      font-family: var(--brand-font-family);
+      font-size: var(--brand-font-size-lg);
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .appbar-actions { display: flex; align-items: center; gap: var(--brand-size); }
+
+    .ng-header-logo { display: flex; align-items: center; margin-right: var(--brand-size-xs); }
+    .ng-brand-wrapper {
+      position: relative; display: inline-block;
+      padding-top: 6px; padding-right: 10px;
+    }
+    .ng-brand-name {
+      font-family: var(--brand-font-family);
+      font-size: 11px; font-weight: 800;
+      letter-spacing: 0.1em;
+      color: #ffffff;
+      text-transform: uppercase;
+      line-height: 1.2;
+      display: block;
+    }
+    .ng-brand-bracket {
+      position: absolute; top: 0; right: 0;
+      width: 10px; height: 10px;
+      border-top: 3px solid #ffffff;
+      border-right: 3px solid #ffffff;
+    }
+    .profile-btn {
+      width: 40px; height: 40px;
+      border-radius: var(--brand-border-radius);
+      border: var(--brand-line-width) solid var(--brand-color-border);
+      background-color: var(--brand-color-text);
+      color: #ffffff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background-color var(--brand-motion-duration-mid) var(--brand-motion-ease-in-out);
+    }
+    .profile-btn:hover { background-color: var(--brand-color-bg-layout); color: var(--brand-color-text); }
+
+    /* ── Modal ───────────────────────────────────────────────────────────── */
+    .modal-backdrop {
+      position: fixed; inset: 0;
+      background-color: rgba(17,17,17,.4);
+      display: none; align-items: center; justify-content: center;
+      z-index: 2000;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background-color: var(--brand-color-bg-container);
+      border: var(--brand-line-width) solid var(--brand-color-border);
+      border-radius: var(--brand-border-radius);
+      width: 100%; max-width: 480px;
+      padding: var(--brand-size-lg);
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: var(--brand-size);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      padding-bottom: var(--brand-size-sm);
+    }
+    .modal-title { font-family: var(--brand-font-family); font-size: var(--brand-font-size-lg); font-weight: 700; }
+    .modal-close { background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--brand-color-text-secondary); }
+
+    /* ── Workflow shell ──────────────────────────────────────────────────── */
+    .workflow-layout {
+      display: flex; flex: 1;
+      height: calc(100vh - 112px);
+      overflow: hidden;
+    }
+
+    /* ── Vertical nav ────────────────────────────────────────────────────── */
+    .vertical-nav {
+      width: 240px;
+      background-color: var(--brand-color-bg-container);
+      border-right: var(--brand-line-width) solid var(--brand-color-border);
+      display: flex; flex-direction: column; flex-shrink: 0;
+      overflow-y: auto; padding: 0;
+    }
+    .nav-content-body { flex: 1; display: flex; flex-direction: column; }
+    .nav-home-link {
+      height: 72px; padding: 0 24px;
+      font-family: var(--brand-font-family);
+      font-size: var(--brand-font-size-lg); font-weight: 700;
+      color: var(--brand-color-text);
+      text-decoration: none;
+      display: flex; align-items: center;
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      margin-bottom: 20px;
+    }
+    .nav-home-link:hover { color: var(--brand-color-primary); }
+    .nav-section { margin-bottom: 20px; }
+    .nav-section-title {
+      font-family: var(--brand-font-family);
+      font-size: var(--brand-font-size); font-weight: 700;
+      color: var(--brand-color-text);
+      padding: 6px 24px;
+      display: flex; align-items: center; gap: var(--brand-size-xs);
+    }
+    .nav-section.active-workflow .nav-section-title {
+      border-left: 3px solid var(--brand-color-primary);
+      padding-left: 21px;
+    }
+    .nav-sub-list { list-style: none; padding-left: 0; margin-top: 6px; }
+    .nav-sub-item {
+      font-size: 13px; color: var(--brand-color-text);
+      padding: 6px 24px 6px 36px;
+      display: flex; align-items: center; gap: var(--brand-size-xs);
+      cursor: pointer; text-decoration: none;
+      transition: color var(--brand-motion-duration-mid) var(--brand-motion-ease-in-out);
+    }
+    .nav-sub-item:hover { color: var(--brand-color-primary); }
+    .nav-sub-item.active-task { font-weight: 700; color: var(--brand-color-primary); }
+    .icon-status-check {
+      width: 18px; height: 18px; border-radius: 50%;
+      background-color: var(--brand-color-text); color: #ffffff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .icon-status-alert {
+      width: 18px; height: 18px; border-radius: 50%;
+      background-color: var(--brand-color-primary); color: #ffffff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; flex-shrink: 0;
+    }
+
+    /* ── Task workflow organism ───────────────────────────────────────────── */
+    .task-workflow-organism {
+      flex: 1; display: flex; flex-direction: column;
+      overflow-y: auto;
+      background-color: var(--brand-color-bg-container);
+    }
+
+    /* ── Organism header ─────────────────────────────────────────────────── */
+    .organism-header {
+      height: 72px; padding: 0 24px;
+      background-color: var(--brand-color-bg-container);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 20px; flex-wrap: wrap;
+    }
+    .header-info { display: flex; flex-direction: column; gap: 2px; }
+    .cost-data-bar {
+      display: flex; align-items: center; gap: 20px;
+      background-color: transparent; border: none; padding: 0;
+    }
+    .cost-metric { display: flex; flex-direction: column; }
+    .cost-metric-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      color: var(--brand-color-text-secondary); letter-spacing: 0.02em;
+    }
+    .cost-metric-val { font-size: 15px; font-weight: 700; color: var(--brand-color-text); }
+
+    /* ── Phase progress bars ─────────────────────────────────────────────── */
+    .phase-progress-container {
+      padding: 16px 24px 12px 24px;
+      background-color: var(--brand-color-bg-layout);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+    }
+    .phase-progress-row { display: flex; gap: 12px; width: 100%; }
+    .phase-item { flex: 1; display: flex; flex-direction: column; gap: 6px; cursor: pointer; }
+    .phase-bar {
+      height: 8px;
+      background-color: var(--brand-color-border);
+      border-radius: var(--brand-border-radius);
+      overflow: hidden; position: relative;
+    }
+    .phase-bar-fill {
+      height: 100%; width: 0%;
+      background-color: var(--brand-color-text-secondary);
+      border-radius: var(--brand-border-radius);
+      transition: width .3s ease, background-color .3s ease;
+    }
+    .phase-item.complete .phase-bar-fill  { width: 100%; background-color: var(--brand-color-text); }
+    .phase-item.in-progress .phase-bar-fill { width: 50%; background-color: var(--brand-color-primary); }
+    .phase-label { font-size: 12px; font-weight: 600; color: var(--brand-color-text); }
+    .phase-item.active .phase-label { color: var(--brand-color-primary); font-weight: 700; }
+
+    /* ── Breadcrumb ──────────────────────────────────────────────────────── */
+    .breadcrumb-container {
+      padding: 10px 24px;
+      background-color: var(--brand-color-bg-container);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+    }
+    .breadcrumb {
+      font-size: 13px; color: var(--brand-color-text-secondary);
+      display: flex; align-items: center; gap: var(--brand-size-xs);
+    }
+    .breadcrumb strong { color: var(--brand-color-text); font-weight: 700; }
+    .breadcrumb-sep { color: var(--brand-color-text-secondary); }
+
+    .organism-content { padding: 24px; flex: 1; overflow-y: auto; }
+
+    /* ── Form card ───────────────────────────────────────────────────────── */
+    .form-container-card {
+      background-color: var(--brand-color-bg-container);
+      border: var(--brand-line-width) solid var(--brand-color-border);
+      border-radius: var(--brand-border-radius);
+      padding: var(--brand-size-xl);
+      max-width: 1080px;
+    }
+    .form-card-title {
+      font-family: var(--brand-font-family);
+      font-size: 22px; font-weight: 700;
+      color: var(--brand-color-text);
+      margin-bottom: 24px;
+    }
+    .form-grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full-width { grid-column: span 3; }
+
+    .form-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--brand-color-text);
+      text-transform: uppercase; letter-spacing: 0.02em;
+    }
+
+    /* ── Material UI-style error state ───────────────────────────────────── */
+    .form-label.error { color: var(--brand-color-error); }
+
+    .form-control {
+      padding: 10px 12px;
+      font-family: var(--brand-font-family);
+      font-size: var(--brand-font-size);
+      border: var(--brand-line-width) solid var(--brand-color-border);
+      border-radius: var(--brand-border-radius);
+      background-color: var(--brand-color-bg-container);
+      color: var(--brand-color-text);
+      transition: border-color var(--brand-motion-duration-mid) var(--brand-motion-ease-in-out);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--brand-color-primary);
+      box-shadow: 0 0 0 3px var(--brand-color-primary-bg);
+    }
+
+    /* Error variant — overrides border, focus ring */
+    .form-control.error {
+      border-color: var(--brand-color-error);
+    }
+    .form-control.error:focus {
+      border-color: var(--brand-color-error);
+      box-shadow: 0 0 0 3px var(--brand-color-error-bg);
+    }
+
+    /* MUI-style helper text */
+    .form-helper-text {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: var(--brand-font-size-sm);   /* 12px — matches MUI caption */
+      line-height: 1.5;
+      margin-top: 3px;
+      color: var(--brand-color-text-secondary);
+    }
+    .form-helper-text.error {
+      color: var(--brand-color-error);
+    }
+    .form-helper-text.error svg {
+      flex-shrink: 0;
+    }
+
+    .form-control.custom-select {
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236b7280' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    /* ── Buttons ─────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: var(--brand-size-xs);
+      padding: var(--brand-size-xs) var(--brand-size);
+      font-family: var(--brand-font-family);
+      font-size: 13px; font-weight: var(--brand-font-weight-strong);
+      border-radius: var(--brand-border-radius);
+      cursor: pointer; text-decoration: none;
+      transition: all var(--brand-motion-duration-mid) var(--brand-motion-ease-in-out);
+      border: var(--brand-line-width) solid transparent;
+    }
+    .btn-primary {
+      background-color: var(--brand-color-primary);
+      color: #ffffff; border-color: var(--brand-color-primary);
+      box-shadow: 0 2px 0 var(--brand-color-primary-bg);
+    }
+    .btn-primary:hover { opacity: 0.92; }
+    .btn-secondary {
+      background-color: var(--brand-color-bg-container);
+      color: var(--brand-color-text);
+      border-color: var(--brand-color-border);
+    }
+    .btn-secondary:hover { background-color: var(--brand-color-bg-layout); }
+  </style>
+</head>
+<body>
+
+  <!-- Classification Bar Top -->
+  <header class="classification-bar top">UNCLASSIFIED</header>
+
+  <!-- App Bar -->
+  <nav class="appbar">
+    <a href="index.html" class="appbar-brand">
+      <div class="appbar-logo-mark">R</div>
+      <span class="appbar-title">Ramp</span>
+    </a>
+    <div class="appbar-actions">
+      <div class="ng-header-logo">
+        <div class="ng-brand-wrapper">
+          <span class="ng-brand-name">NORTHROP GRUMMAN</span>
+          <div class="ng-brand-bracket"></div>
+        </div>
+      </div>
+      <button type="button" class="profile-btn" onclick="toggleProfileModal()" title="User Profile">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Workflow Shell -->
+  <div class="workflow-layout">
+
+    <!-- Vertical Navigation -->
+    <aside class="vertical-nav">
+      <div class="nav-content-body">
+        <a href="index.html" class="nav-home-link">Home</a>
+        <div class="nav-section active-workflow">
+          <div class="nav-section-title">Environment Request</div>
+          <ul class="nav-sub-list">
+            <li class="nav-sub-item active-task" onclick="window.location.href='ProgramDetails.html'">
+              <span class="icon-status-check">✓</span>
+              <span>Enter Program Details</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='FinancialDetails.html'">
+              <span class="icon-status-check">✓</span>
+              <span>Enter Financial Details</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='workflow.html?task=computespecs'">
+              <span class="icon-status-alert">!</span>
+              <span>Set Up Cloud</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='workflow.html?task=onprem'">
+              <span>Set Up On-Prem</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='workflow.html?task=security'">
+              <span>Define Users and Location</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='workflow.html?task=toolsets'">
+              <span>Choose Toolset(s)</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="task-workflow-organism">
+
+      <!-- Organism Header -->
+      <div class="organism-header">
+        <div class="header-info">
+          <span style="font-family: var(--brand-font-family-mono); font-size: 11px; color: var(--brand-color-text-secondary); font-weight: 600; text-transform: uppercase;">ID: ENV-2026-8941</span>
+          <h2 style="font-family: var(--brand-font-family); font-size: var(--brand-font-size-lg); font-weight: 700; color: var(--brand-color-text);">Request New Environment</h2>
+        </div>
+        <div class="cost-data-bar">
+          <div class="cost-metric">
+            <span class="cost-metric-label">Base Fee</span>
+            <span class="cost-metric-val">$5400.00</span>
+          </div>
+          <div style="width: 1px; height: 24px; background-color: var(--brand-color-border);"></div>
+          <div class="cost-metric">
+            <span class="cost-metric-label">Compliance Levels</span>
+            <span class="cost-metric-val">$0000</span>
+          </div>
+          <div style="width: 1px; height: 24px; background-color: var(--brand-color-border);"></div>
+          <div class="cost-metric">
+            <span class="cost-metric-label">Accreditations</span>
+            <span class="cost-metric-val">$00.00</span>
+          </div>
+          <div style="width: 1px; height: 24px; background-color: var(--brand-color-border);"></div>
+          <div class="cost-metric">
+            <span class="cost-metric-label">On-Premesis</span>
+            <span class="cost-metric-val">$00.00</span>
+          </div>
+          <div style="width: 1px; height: 24px; background-color: var(--brand-color-border);"></div>
+          <div class="cost-metric">
+            <span class="cost-metric-label">TOTAL</span>
+            <span class="cost-metric-val">$5400.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase Progress Bars -->
+      <div class="phase-progress-container">
+        <div class="phase-progress-row">
+          <div class="phase-item complete active" onclick="window.location.href='ProgramDetails.html'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Enter Program Details</div>
+          </div>
+          <div class="phase-item complete" onclick="window.location.href='FinancialDetails.html'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Enter Financial Details</div>
+          </div>
+          <div class="phase-item in-progress" onclick="window.location.href='workflow.html?task=computespecs'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Set Up Cloud</div>
+          </div>
+          <div class="phase-item not-started" onclick="window.location.href='workflow.html?task=onprem'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Set Up On-Prem</div>
+          </div>
+          <div class="phase-item not-started" onclick="window.location.href='workflow.html?task=security'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Define Users and Location</div>
+          </div>
+          <div class="phase-item not-started" onclick="window.location.href='workflow.html?task=toolsets'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Choose Toolset(s)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb-container">
+        <div class="breadcrumb">
+          <span>Environment Request</span>
+          <span class="breadcrumb-sep">&gt;</span>
+          <strong>Enter Program Details</strong>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <div class="organism-content">
+        <div class="form-container-card">
+          <h2 class="form-card-title">Enter Program Details</h2>
+
+          <form id="program-details-form" onsubmit="event.preventDefault(); saveAndContinue();">
+
+            <!--
+              ── Program Name — ERROR STATE (Material UI guidelines) ─────────
+              • Label turns error color
+              • Input border turns error color
+              • Helper text below: small (12px), error color, leading error icon
+            -->
+            <div class="form-group full-width" style="margin-bottom: 20px;">
+              <label class="form-label error" for="input-program-name">Program Name</label>
+              <input
+                type="text"
+                id="input-program-name"
+                class="form-control error"
+                placeholder="Enter program name"
+                value="HPC Defense Simulation Enclave"
+                aria-describedby="program-name-error"
+                aria-invalid="true"
+              >
+              <!-- MUI FormHelperText with error -->
+              <span class="form-helper-text error" id="program-name-error" role="alert">
+                <!-- MUI uses a small warning/error icon inline -->
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+                No program of that name found
+              </span>
+            </div>
+
+            <!-- Row: Program Sector / Division / Approver -->
+            <div class="form-grid-3col" style="margin-bottom: 20px;">
+              <div class="form-group">
+                <label class="form-label" for="input-program-sector">Program Sector</label>
+                <input type="text" id="input-program-sector" class="form-control" placeholder="Enter Sector" value="Aeronautics &amp; Systems">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="select-program-division">Program Division</label>
+                <select id="select-program-division" class="form-control custom-select">
+                  <option value="" disabled>Enter division</option>
+                  <option value="Aeronautics" selected>Aeronautics Systems</option>
+                  <option value="Defense">Defense Systems</option>
+                  <option value="Mission">Mission Systems</option>
+                  <option value="Space">Space Systems</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="input-program-approver">Program Approver</label>
+                <input type="text" id="input-program-approver" class="form-control" placeholder="Enter approver" value="Vance, Alex (Lead Engineer)">
+              </div>
+            </div>
+
+            <!-- Co-Owners -->
+            <div class="form-group full-width" style="margin-bottom: 20px;">
+              <label class="form-label" for="select-co-owners">Designate Co-Owner(s)</label>
+              <select id="select-co-owners" class="form-control custom-select">
+                <option value="alex.vance" selected>Alex Vance (Systems Lead)</option>
+                <option value="jordan.reed">Jordan Reed (DevOps Principal)</option>
+                <option value="morgan.chen">Morgan Chen (Security Reviewer)</option>
+              </select>
+            </div>
+
+            <!-- Environment Description -->
+            <div class="form-group full-width" style="margin-bottom: 24px;">
+              <label class="form-label" for="textarea-env-desc">Environment Description</label>
+              <textarea id="textarea-env-desc" class="form-control" rows="5" placeholder="How will your program use this environment?">High-performance GPU simulation cluster for hypersonic aerodynamics testing and containerized workloads.</textarea>
+            </div>
+
+            <!-- Actions -->
+            <div style="display: flex; justify-content: flex-end; gap: 16px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--brand-color-border);">
+              <button type="button" class="btn btn-secondary" style="min-width: 120px;" onclick="goBack()">Back</button>
+              <button type="button" class="btn btn-primary" style="min-width: 140px;" onclick="saveAndContinue()">Save &amp; Continue</button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- User Profile Modal -->
+  <div class="modal-backdrop" id="profile-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">User Profile &amp; Authorization</h3>
+        <button type="button" class="modal-close" onclick="toggleProfileModal()">&times;</button>
+      </div>
+      <div style="font-size: 14px; color: var(--brand-color-text); margin-bottom: 12px;">
+        <strong>User:</strong> Alex Vance (Senior Systems Engineer)
+      </div>
+      <div style="font-size: 13px; color: var(--brand-color-text-secondary); margin-bottom: 16px;">
+        <strong>Organization:</strong> CIDO / High-Performance Computing Division<br>
+        <strong>Clearance:</strong> Top Secret / SCI
+      </div>
+      <div style="background-color: var(--brand-color-bg-layout); border: 1px solid var(--brand-color-border); border-radius: var(--brand-border-radius); padding: 12px; font-size: 13px;">
+        <strong>Active Role:</strong> <span style="color: var(--brand-color-primary); font-weight: 700;">Owner</span>
+        <p style="margin-top: 6px; color: var(--brand-color-text-secondary);">Owner role grants full workflow execution, request, edit, archive, and monitoring rights.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Classification Bar Bottom -->
+  <footer class="classification-bar bottom">UNCLASSIFIED</footer>
+
+  <script>
+    function goBack() {
+      window.location.href = 'workflow.html?workflow=request_new_environment&id=ENV-2026-8941';
+    }
+    function saveAndContinue() {
+      window.location.href = 'FinancialDetails.html';
+    }
+    function toggleProfileModal() {
+      document.getElementById('profile-modal').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
