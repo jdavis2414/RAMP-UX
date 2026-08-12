@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ramp — Review &amp; Submit</title>
+  <style>
+    /* ── Brand token layer ───────────────────────────────────────────────── */
+    :root {
+      --brand-color-primary:          #1677ff;
+      --brand-color-primary-bg:       #e6f4ff;
+      --brand-color-primary-bg-hover: #bae0ff;
+      --brand-color-primary-border:   #91caff;
+      --brand-color-primary-hover:    #4096ff;
+      --brand-color-primary-active:   #0958d9;
+      --brand-color-primary-text:     #002c8c;
+      --brand-color-success:          #52c41a;
+      --brand-color-success-bg:       #f6ffed;
+      --brand-color-success-border:   #b6eb8f;
+      --brand-color-warning:          #faad14;
+      --brand-color-warning-bg:       #fffbe6;
+      --brand-color-warning-border:   #ffe58f;
+      --brand-color-error:            #ff4d4f;
+      --brand-color-error-bg:         #fff2f0;
+      --brand-color-error-border:     #ffccc7;
+      --brand-color-text:             #111111;
+      --brand-color-text-secondary:   #6b7280;
+      --brand-color-text-tertiary:    #949494;
+      --brand-color-bg-layout:        #f7f8fa;
+      --brand-color-bg-container:     #ffffff;
+      --brand-color-border:           #d9dee7;
+      --brand-color-border-secondary: #f1f1f1;
+      --brand-color-fill-quaternary:  #fafafa;
+
+      --brand-font-family:      'Inter', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --brand-font-family-mono: ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', monospace;
+      --brand-font-size:          14px;
+      --brand-font-size-sm:       12px;
+      --brand-font-size-lg:       18px;
+      --brand-font-size-xl:       22px;
+      --brand-font-weight-strong: 600;
+
+      --brand-border-radius:    8px;
+      --brand-border-radius-sm: 5px;
+      --brand-border-radius-lg: 10px;
+      --brand-line-width:       1px;
+
+      --brand-size-xxs: 4px;
+      --brand-size-xs:  8px;
+      --brand-size-sm:  12px;
+      --brand-size:     16px;
+      --brand-size-md:  20px;
+      --brand-size-lg:  24px;
+      --brand-size-xl:  32px;
+      --brand-size-xxl: 48px;
+
+      --brand-motion-duration-fast: 0.1s;
+      --brand-motion-duration-mid:  0.2s;
+      --brand-motion-ease-in-out:   cubic-bezier(0.645, 0.045, 0.355, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--brand-color-bg-container);
+      color: var(--brand-color-text);
+      font-family: var(--brand-font-family);
+      font-size: 15px;
+      line-height: 1.5;
+      padding-top: 28px;
+      padding-bottom: 28px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Classification bars ─────────────────────────────────────────────── */
+    .classification-bar {
+      position: fixed; left: 0; right: 0;
+      height: 28px;
+      background-color: #006622;
+      color: #ffffff;
+      font-family: var(--brand-font-family-mono);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .classification-bar.top  { top: 0; border-bottom: var(--brand-line-width) solid rgba(255,255,255,.2); }
+    .classification-bar.bottom { bottom: 0; top: auto; border-top: var(--brand-line-width) solid rgba(255,255,255,.2); }
+
+    /* ── App bar ─────────────────────────────────────────────────────────── */
+    .appbar {
+      height: 56px;
+      background-color: var(--brand-color-text);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px; flex-shrink: 0;
+    }
+    .appbar-brand { display: flex; align-items: center; gap: var(--brand-size-sm); text-decoration: none; color: #fff; }
+    .appbar-logo-mark {
+      width: 28px; height: 28px;
+      background-color: #fff; color: var(--brand-color-text);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 14px;
+      border-radius: var(--brand-border-radius);
+    }
+    .appbar-title { font-size: var(--brand-font-size-lg); font-weight: 700; color: #fff; }
+    .appbar-actions { display: flex; align-items: center; gap: var(--brand-size); }
+    .ng-brand-wrapper { position: relative; display: inline-block; padding-top: 6px; padding-right: 10px; }
+    .ng-brand-name { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; color: #fff; text-transform: uppercase; line-height: 1.2; display: block; }
+    .ng-brand-bracket { position: absolute; top: 0; right: 0; width: 10px; height: 10px; border-top: 3px solid #fff; border-right: 3px solid #fff; }
+    .profile-btn {
+      width: 40px; height: 40px;
+      border-radius: var(--brand-border-radius);
+      border: var(--brand-line-width) solid var(--brand-color-border);
+      background-color: var(--brand-color-text); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background-color var(--brand-motion-duration-mid) var(--brand-motion-ease-in-out);
+    }
+    .profile-btn:hover { background-color: var(--brand-color-bg-layout); color: var(--brand-color-text); }
+
+    /* ── Modal ───────────────────────────────────────────────────────────── */
+    .modal-backdrop { position: fixed; inset: 0; background-color: rgba(17,17,17,.4); display: none; align-items: center; justify-content: center; z-index: 2000; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background-color: var(--brand-color-bg-container); border: var(--brand-line-width) solid var(--brand-color-border); border-radius: var(--brand-border-radius); width: 100%; max-width: 480px; padding: var(--brand-size-lg); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--brand-size); border-bottom: var(--brand-line-width) solid var(--brand-color-border); padding-bottom: var(--brand-size-sm); }
+    .modal-title { font-size: var(--brand-font-size-lg); font-weight: 700; }
+    .modal-close { background: transparent; border: none; font-size: 20px; cursor: pointer; color: var(--brand-color-text-secondary); }
+
+    /* ── Layout shell ────────────────────────────────────────────────────── */
+    .workflow-layout { display: flex; flex: 1; height: calc(100vh - 112px); overflow: hidden; }
+
+    /* ── Vertical nav ────────────────────────────────────────────────────── */
+    .vertical-nav {
+      width: 240px; background-color: var(--brand-color-bg-container);
+      border-right: var(--brand-line-width) solid var(--brand-color-border);
+      display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
+    }
+    .nav-content-body { flex: 1; display: flex; flex-direction: column; }
+    .nav-home-link {
+      height: 72px; padding: 0 24px;
+      font-size: var(--brand-font-size-lg); font-weight: 700;
+      color: var(--brand-color-text); text-decoration: none;
+      display: flex; align-items: center;
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      margin-bottom: 20px;
+    }
+    .nav-home-link:hover { color: var(--brand-color-primary); }
+    .nav-section { margin-bottom: 20px; }
+    .nav-section-title {
+      font-size: var(--brand-font-size); font-weight: 700; color: var(--brand-color-text);
+      padding: 6px 24px; display: flex; align-items: center; gap: var(--brand-size-xs);
+    }
+    .nav-section.active-workflow .nav-section-title {
+      border-left: 3px solid var(--brand-color-primary); padding-left: 21px;
+    }
+    .nav-sub-list { list-style: none; padding-left: 0; margin-top: 6px; }
+    .nav-sub-item {
+      font-size: 13px; color: var(--brand-color-text);
+      padding: 6px 24px 6px 36px;
+      display: flex; align-items: center; gap: var(--brand-size-xs);
+      cursor: pointer; text-decoration: none;
+      transition: color var(--brand-motion-duration-mid) var(--brand-motion-ease-in-out);
+    }
+    .nav-sub-item:hover { color: var(--brand-color-primary); }
+    .nav-sub-item.active-task { font-weight: 700; color: var(--brand-color-primary); }
+    .nav-sub-item.active-outline {
+      border: var(--brand-line-width) solid var(--brand-color-primary);
+      border-radius: var(--brand-border-radius-sm);
+      padding: 5px 23px 5px 35px; margin: 1px 12px;
+    }
+    .icon-status-check {
+      width: 18px; height: 18px; border-radius: 50%;
+      background-color: var(--brand-color-text); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .icon-status-success {
+      width: 18px; height: 18px; border-radius: 50%;
+      background-color: var(--brand-color-success); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .icon-status-alert {
+      width: 18px; height: 18px; border-radius: 50%;
+      background-color: var(--brand-color-primary); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; flex-shrink: 0;
+    }
+
+    /* ── Organism shell ──────────────────────────────────────────────────── */
+    .task-workflow-organism { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background-color: var(--brand-color-bg-container); }
+
+    .organism-header {
+      height: 72px; padding: 0 24px;
+      background-color: var(--brand-color-bg-container);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 20px; flex-wrap: wrap; flex-shrink: 0;
+    }
+    .header-info { display: flex; flex-direction: column; gap: 2px; }
+    .cost-data-bar { display: flex; align-items: center; gap: 20px; }
+    .cost-metric { display: flex; flex-direction: column; }
+    .cost-metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--brand-color-text-secondary); letter-spacing: 0.02em; }
+    .cost-metric-val { font-size: 15px; font-weight: 700; color: var(--brand-color-text); }
+    .cost-divider { width: 1px; height: 24px; background-color: var(--brand-color-border); }
+
+    /* ── Phase progress ──────────────────────────────────────────────────── */
+    .phase-progress-container {
+      padding: 16px 24px 12px; background-color: var(--brand-color-bg-layout);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      flex-shrink: 0;
+    }
+    .phase-progress-row { display: flex; gap: 12px; width: 100%; }
+    .phase-item { flex: 1; display: flex; flex-direction: column; gap: 6px; cursor: pointer; }
+    .phase-bar { height: 8px; background-color: var(--brand-color-border); border-radius: var(--brand-border-radius); overflow: hidden; }
+    .phase-bar-fill { height: 100%; width: 0%; border-radius: var(--brand-border-radius); transition: width .3s ease, background-color .3s ease; }
+    .phase-item.complete .phase-bar-fill  { width: 100%; background-color: var(--brand-color-text); }
+    .phase-item.in-progress .phase-bar-fill { width: 50%; background-color: var(--brand-color-primary); }
+    .phase-label { font-size: 12px; font-weight: 600; color: var(--brand-color-text); }
+    .phase-item.active .phase-label { color: var(--brand-color-primary); font-weight: 700; }
+
+    /* ── Breadcrumb ──────────────────────────────────────────────────────── */
+    .breadcrumb-container {
+      padding: 10px 24px;
+      background-color: var(--brand-color-bg-container);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+      flex-shrink: 0;
+    }
+    .breadcrumb { font-size: 13px; color: var(--brand-color-text-secondary); display: flex; align-items: center; gap: var(--brand-size-xs); }
+    .breadcrumb strong { color: var(--brand-color-text); font-weight: 700; }
+    .breadcrumb-sep { color: var(--brand-color-text-secondary); }
+
+    /* ── Main scrollable content ─────────────────────────────────────────── */
+    .organism-content { padding: 24px; flex: 1; overflow-y: auto; }
+
+    /* ── Page title block ────────────────────────────────────────────────── */
+    .page-title-block { margin-bottom: var(--brand-size-lg); }
+    .page-title { font-size: var(--brand-font-size-xl); font-weight: 700; color: var(--brand-color-text); margin-bottom: 4px; }
+    .page-subtitle { font-size: var(--brand-font-size); color: var(--brand-color-text-secondary); }
+
+    /* ── Validation alert banner ─────────────────────────────────────────── */
+    .validation-banner {
+      display: flex; gap: var(--brand-size-sm); align-items: flex-start;
+      padding: var(--brand-size-sm) var(--brand-size);
+      border-radius: var(--brand-border-radius-lg);
+      margin-bottom: var(--brand-size-lg);
+      font-size: var(--brand-font-size);
+    }
+    .validation-banner.success {
+      background-color: var(--brand-color-success-bg);
+      border: var(--brand-line-width) solid var(--brand-color-success-border);
+    }
+    .validation-banner.warning {
+      background-color: var(--brand-color-warning-bg);
+      border: var(--brand-line-width) solid var(--brand-color-warning-border);
+    }
+    .validation-banner.error {
+      background-color: var(--brand-color-error-bg);
+      border: var(--brand-line-width) solid var(--brand-color-error-border);
+    }
+    .banner-icon { flex: 0 0 auto; font-size: 16px; margin-top: 1px; line-height: 1.5; }
+    .banner-text strong { font-weight: var(--brand-font-weight-strong); display: block; margin-bottom: 2px; }
+
+    /* ── Error phase bar ─────────────────────────────────────────────────── */
+    .phase-item.error .phase-bar-fill  { width: 100%; background-color: var(--brand-color-error); }
+    .phase-item.error .phase-label     { color: var(--brand-color-error); font-weight: 700; }
+
+    /* ── Error summary card ──────────────────────────────────────────────── */
+    .summary-card.error {
+      border-color: var(--brand-color-error-border);
+      box-shadow: 0 0 0 3px var(--brand-color-error-bg);
+    }
+    .summary-card.error .summary-card-header {
+      background-color: var(--brand-color-error-bg);
+      border-bottom-color: var(--brand-color-error-border);
+    }
+    .section-step-badge.error { background-color: var(--brand-color-error); }
+    .summary-card-status.error {
+      color: var(--brand-color-error);
+      background-color: var(--brand-color-error-bg);
+      border-color: var(--brand-color-error-border);
+    }
+
+    /* ── Error field highlight ───────────────────────────────────────────── */
+    .kv-item.field-error .kv-label { color: var(--brand-color-error); }
+    .kv-item.field-error .kv-value.mono {
+      color: var(--brand-color-error);
+      background-color: var(--brand-color-error-bg);
+      border: var(--brand-line-width) solid var(--brand-color-error-border);
+      border-radius: var(--brand-border-radius-sm);
+      padding: 2px 6px;
+      display: inline-block;
+    }
+    .kv-field-error-msg {
+      display: flex; align-items: center; gap: 4px;
+      font-size: var(--brand-font-size-sm);
+      color: var(--brand-color-error);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* ── Error instructions block ────────────────────────────────────────── */
+    .field-error-instructions {
+      margin-top: var(--brand-size-md);
+      padding: var(--brand-size-sm) var(--brand-size);
+      background-color: var(--brand-color-error-bg);
+      border: var(--brand-line-width) solid var(--brand-color-error-border);
+      border-left: 3px solid var(--brand-color-error);
+      border-radius: var(--brand-border-radius);
+    }
+    .field-error-instructions-title {
+      display: flex; align-items: center; gap: 6px;
+      font-size: var(--brand-font-size-sm); font-weight: 700;
+      color: var(--brand-color-error);
+      margin-bottom: var(--brand-size-xs);
+    }
+    .field-error-instructions ol {
+      margin: 0; padding-left: 20px;
+      font-size: var(--brand-font-size-sm); color: var(--brand-color-text);
+      line-height: 1.8;
+    }
+    .field-error-instructions ol li + li { margin-top: 2px; }
+    .field-error-instructions a {
+      color: var(--brand-color-primary); font-weight: var(--brand-font-weight-strong);
+      text-decoration: none;
+    }
+    .field-error-instructions a:hover { text-decoration: underline; }
+
+    /* ── Error nav icon ──────────────────────────────────────────────────── */
+    .icon-status-error {
+      width: 18px; height: 18px; border-radius: 50%;
+      background-color: var(--brand-color-error); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; flex-shrink: 0;
+    }
+
+    /* ── Disabled submit button ──────────────────────────────────────────── */
+    .btn-primary.disabled {
+      background-color: var(--brand-color-border);
+      border-color: var(--brand-color-border);
+      color: var(--brand-color-text-secondary);
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 1;
+      pointer-events: none;
+    }
+
+    /* ── Summary section cards ───────────────────────────────────────────── */
+    .summary-sections { display: flex; flex-direction: column; gap: var(--brand-size); max-width: 1080px; }
+
+    .summary-card {
+      background-color: var(--brand-color-bg-container);
+      border: var(--brand-line-width) solid var(--brand-color-border);
+      border-radius: var(--brand-border-radius-lg);
+      overflow: hidden;
+    }
+
+    /* card header */
+    .summary-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--brand-size-md) var(--brand-size-lg);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border-secondary);
+      background-color: var(--brand-color-fill-quaternary);
+    }
+    .summary-card-header-left { display: flex; align-items: center; gap: var(--brand-size-sm); }
+    .section-step-badge {
+      width: 24px; height: 24px; border-radius: 50%;
+      background-color: var(--brand-color-text); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--brand-font-family-mono);
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .section-step-badge.complete {
+      background-color: var(--brand-color-success);
+    }
+    .section-step-badge.warning {
+      background-color: var(--brand-color-warning);
+    }
+    .summary-card-title { font-size: var(--brand-font-size); font-weight: 700; color: var(--brand-color-text); }
+    .summary-card-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: var(--brand-font-size-sm); font-weight: var(--brand-font-weight-strong);
+      height: 24px; padding: 0 var(--brand-size-xs);
+      border-radius: var(--brand-border-radius-sm);
+      border: var(--brand-line-width) solid;
+    }
+    .summary-card-status.complete {
+      color: var(--brand-color-success);
+      background-color: var(--brand-color-success-bg);
+      border-color: var(--brand-color-success-border);
+    }
+    .summary-card-status.warning {
+      color: var(--brand-color-warning);
+      background-color: var(--brand-color-warning-bg);
+      border-color: var(--brand-color-warning-border);
+    }
+    .summary-card-header-right { display: flex; align-items: center; gap: var(--brand-size-sm); }
+
+    /* edit link */
+    .edit-link {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: var(--brand-font-size-sm); font-weight: var(--brand-font-weight-strong);
+      color: var(--brand-color-primary); text-decoration: none;
+      padding: 4px var(--brand-size-xs);
+      border-radius: var(--brand-border-radius-sm);
+      transition: background-color var(--brand-motion-duration-fast) var(--brand-motion-ease-in-out);
+    }
+    .edit-link:hover { background-color: var(--brand-color-primary-bg); }
+
+    /* card body */
+    .summary-card-body { padding: var(--brand-size-lg); }
+
+    /* key-value grid */
+    .kv-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--brand-size-sm) var(--brand-size-lg);
+    }
+    .kv-grid.two-col { grid-template-columns: repeat(2, 1fr); }
+    .kv-grid.one-col { grid-template-columns: 1fr; }
+    .kv-item { display: flex; flex-direction: column; gap: 3px; }
+    .kv-item.span-2 { grid-column: span 2; }
+    .kv-item.span-3 { grid-column: span 3; }
+    .kv-label {
+      font-size: var(--brand-font-size-sm); font-weight: var(--brand-font-weight-strong);
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--brand-color-text-secondary);
+    }
+    .kv-value {
+      font-size: var(--brand-font-size); color: var(--brand-color-text);
+      line-height: 1.4;
+    }
+    .kv-value.mono { font-family: var(--brand-font-family-mono); }
+    .kv-value.empty { color: var(--brand-color-text-tertiary); font-style: italic; }
+
+    /* inline tag */
+    .inline-tag {
+      display: inline-flex; align-items: center;
+      height: 20px; padding: 0 6px;
+      font-size: 11px; font-weight: 700; line-height: 1;
+      border-radius: var(--brand-border-radius-sm);
+      border: var(--brand-line-width) solid;
+      margin-left: 6px; vertical-align: middle;
+    }
+    .inline-tag.primary { color: var(--brand-color-primary); background: var(--brand-color-primary-bg); border-color: var(--brand-color-primary-border); }
+    .inline-tag.success { color: var(--brand-color-success); background: var(--brand-color-success-bg); border-color: var(--brand-color-success-border); }
+
+    /* section divider inside card */
+    .card-section-divider {
+      border: none; border-top: var(--brand-line-width) solid var(--brand-color-border-secondary);
+      margin: var(--brand-size-md) 0;
+    }
+    .card-subsection-label {
+      font-size: var(--brand-font-size-sm); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--brand-color-text-tertiary);
+      margin-bottom: var(--brand-size-sm);
+    }
+
+    /* toolset pills */
+    .toolset-grid { display: flex; flex-wrap: wrap; gap: var(--brand-size-xs); }
+    .toolset-pill {
+      display: inline-flex; align-items: center; gap: var(--brand-size-xxs);
+      padding: 5px 10px;
+      background-color: var(--brand-color-bg-layout);
+      border: var(--brand-line-width) solid var(--brand-color-border);
+      border-radius: var(--brand-border-radius);
+      font-size: var(--brand-font-size-sm); font-weight: var(--brand-font-weight-strong);
+      color: var(--brand-color-text);
+    }
+    .toolset-pill .pill-check { color: var(--brand-color-success); }
+
+    /* cost summary card */
+    .cost-summary-card {
+      max-width: 1080px;
+      background-color: var(--brand-color-bg-container);
+      border: 2px solid var(--brand-color-primary);
+      border-radius: var(--brand-border-radius-lg);
+      overflow: hidden;
+      margin-top: var(--brand-size);
+      box-shadow: 0 8px 24px var(--brand-color-primary-bg);
+    }
+    .cost-summary-header {
+      padding: var(--brand-size-md) var(--brand-size-lg);
+      background-color: var(--brand-color-primary-bg);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-primary-border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .cost-summary-title { font-size: var(--brand-font-size); font-weight: 700; color: var(--brand-color-primary-text); }
+    .cost-summary-body { padding: var(--brand-size-lg); }
+    .cost-line-table { width: 100%; border-collapse: collapse; }
+    .cost-line-table th {
+      text-align: left; padding: var(--brand-size-xs) var(--brand-size-sm);
+      font-size: var(--brand-font-size-sm); font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.04em; color: var(--brand-color-text-secondary);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border);
+    }
+    .cost-line-table td {
+      padding: var(--brand-size-sm) var(--brand-size-sm);
+      font-size: var(--brand-font-size); color: var(--brand-color-text);
+      border-bottom: var(--brand-line-width) solid var(--brand-color-border-secondary);
+    }
+    .cost-line-table tr:last-child td { border-bottom: none; }
+    .cost-line-table .amount { text-align: right; font-family: var(--brand-font-family-mono); font-weight: 700; }
+    .cost-line-table .total-row td {
+      border-top: 2px solid var(--brand-color-border);
+      font-weight: 700; font-size: 15px;
+      padding-top: var(--brand-size-sm);
+    }
+
+    /* ── Submission footer ───────────────────────────────────────────────── */
+    .submit-footer {
+      max-width: 1080px;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: var(--brand-size-lg);
+      margin-top: var(--brand-size-lg);
+      padding-top: var(--brand-size-lg);
+      border-top: var(--brand-line-width) solid var(--brand-color-border);
+    }
+    .submit-footer-note { font-size: var(--brand-font-size-sm); color: var(--brand-color-text-secondary); max-width: 55ch; }
+    .submit-footer-actions { display: flex; gap: var(--brand-size-sm); align-items: center; flex-shrink: 0; }
+
+    /* ── Buttons ─────────────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex; align-items: center; gap: var(--brand-size-xs);
+      padding: var(--brand-size-xs) var(--brand-size);
+      font-family: var(--brand-font-family);
+      font-size: 13px; font-weight: var(--brand-font-weight-strong);
+      border-radius: var(--brand-border-radius);
+      cursor: pointer; text-decoration: none;
+      transition: all var(--brand-motion-duration-mid) var(--brand-motion-ease-in-out);
+      border: var(--brand-line-width) solid transparent;
+    }
+    .btn-primary {
+      background-color: var(--brand-color-primary); color: #fff;
+      border-color: var(--brand-color-primary);
+      box-shadow: 0 2px 0 var(--brand-color-primary-bg);
+    }
+    .btn-primary:hover { opacity: 0.92; }
+    .btn-secondary {
+      background-color: var(--brand-color-bg-container); color: var(--brand-color-text);
+      border-color: var(--brand-color-border);
+    }
+    .btn-secondary:hover { background-color: var(--brand-color-bg-layout); }
+    .btn-lg { height: 40px; padding: 0 var(--brand-size-lg); font-size: var(--brand-font-size); }
+
+    /* ── Submit confirmation modal ───────────────────────────────────────── */
+    .confirm-modal {
+      background-color: var(--brand-color-bg-container);
+      border: var(--brand-line-width) solid var(--brand-color-border);
+      border-radius: var(--brand-border-radius-lg);
+      width: 100%; max-width: 520px; padding: var(--brand-size-xl);
+      text-align: center;
+    }
+    .confirm-modal-icon {
+      width: 56px; height: 56px; border-radius: 50%;
+      background-color: var(--brand-color-primary-bg);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--brand-size-md);
+    }
+    .confirm-modal-title { font-size: var(--brand-font-size-lg); font-weight: 700; margin-bottom: var(--brand-size-xs); }
+    .confirm-modal-body { font-size: var(--brand-font-size); color: var(--brand-color-text-secondary); margin-bottom: var(--brand-size-lg); line-height: 1.6; }
+    .confirm-modal-actions { display: flex; gap: var(--brand-size-sm); justify-content: center; }
+  </style>
+</head>
+<body>
+
+  <!-- Classification Bar Top -->
+  <header class="classification-bar top">UNCLASSIFIED</header>
+
+  <!-- App Bar -->
+  <nav class="appbar">
+    <a href="index.html" class="appbar-brand">
+      <div class="appbar-logo-mark">R</div>
+      <span class="appbar-title">Ramp</span>
+    </a>
+    <div class="appbar-actions">
+      <div style="display:flex;align-items:center;margin-right:8px;">
+        <div class="ng-brand-wrapper">
+          <span class="ng-brand-name">NORTHROP GRUMMAN</span>
+          <div class="ng-brand-bracket"></div>
+        </div>
+      </div>
+      <button type="button" class="profile-btn" onclick="toggleProfileModal()" title="User Profile">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Workflow Shell -->
+  <div class="workflow-layout">
+
+    <!-- Vertical Navigation -->
+    <aside class="vertical-nav">
+      <div class="nav-content-body">
+        <a href="index.html" class="nav-home-link">Home</a>
+        <div class="nav-section active-workflow">
+          <div class="nav-section-title">Environment Request</div>
+          <ul class="nav-sub-list">
+            <li class="nav-sub-item" onclick="window.location.href='ProgramDetails.html'">
+              <span class="icon-status-check">✓</span>
+              <span>Enter Program Details</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='FinancialDetails.html'">
+              <span class="icon-status-check">✓</span>
+              <span>Enter Financial Details</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='workflow.html?task=computespecs'">
+              <span class="icon-status-check">✓</span>
+              <span>Set Up Cloud</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='workflow.html?task=onprem'">
+              <span class="icon-status-check">✓</span>
+              <span>Set Up On-Prem</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='workflow.html?task=security'">
+              <span class="icon-status-check">✓</span>
+              <span>Define Users and Location</span>
+            </li>
+            <li class="nav-sub-item" onclick="window.location.href='workflow.html?task=toolsets'">
+              <span class="icon-status-check">✓</span>
+              <span>Choose Toolset(s)</span>
+            </li>
+            <li class="nav-sub-item active-task active-outline">
+              <span class="icon-status-alert">→</span>
+              <span>Review &amp; Submit</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="task-workflow-organism">
+
+      <!-- Organism Header -->
+      <div class="organism-header">
+        <div class="header-info">
+          <span style="font-family:var(--brand-font-family-mono);font-size:11px;color:var(--brand-color-text-secondary);font-weight:600;text-transform:uppercase;">ID: ENV-2026-8941</span>
+          <h2 style="font-size:var(--brand-font-size-lg);font-weight:700;color:var(--brand-color-text);">Request New Environment</h2>
+        </div>
+        <div class="cost-data-bar">
+          <div class="cost-metric">
+            <span class="cost-metric-label">Base Fee</span>
+            <span class="cost-metric-val">$5,400.00</span>
+          </div>
+          <div class="cost-divider"></div>
+          <div class="cost-metric">
+            <span class="cost-metric-label">Compliance Levels</span>
+            <span class="cost-metric-val">$1,200.00</span>
+          </div>
+          <div class="cost-divider"></div>
+          <div class="cost-metric">
+            <span class="cost-metric-label">Accreditations</span>
+            <span class="cost-metric-val">$800.00</span>
+          </div>
+          <div class="cost-divider"></div>
+          <div class="cost-metric">
+            <span class="cost-metric-label">On-Premises</span>
+            <span class="cost-metric-val">$0.00</span>
+          </div>
+          <div class="cost-divider"></div>
+          <div class="cost-metric">
+            <span class="cost-metric-label">TOTAL</span>
+            <span class="cost-metric-val" style="color:var(--brand-color-primary);font-size:16px;">$7,400.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phase Progress Bars — all complete, this step active -->
+      <div class="phase-progress-container">
+        <div class="phase-progress-row">
+          <div class="phase-item complete" onclick="window.location.href='ProgramDetails.html'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Enter Program Details</div>
+          </div>
+          <div class="phase-item complete" onclick="window.location.href='FinancialDetails.html'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Enter Financial Details</div>
+          </div>
+          <div class="phase-item complete" onclick="window.location.href='workflow.html?task=computespecs'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Set Up Cloud</div>
+          </div>
+          <div class="phase-item complete" onclick="window.location.href='workflow.html?task=onprem'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Set Up On-Prem</div>
+          </div>
+          <div class="phase-item complete" onclick="window.location.href='workflow.html?task=security'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Define Users and Location</div>
+          </div>
+          <div class="phase-item complete" onclick="window.location.href='workflow.html?task=toolsets'">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Choose Toolset(s)</div>
+          </div>
+          <div class="phase-item in-progress active">
+            <div class="phase-bar"><div class="phase-bar-fill"></div></div>
+            <div class="phase-label">Review &amp; Submit</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb-container">
+        <div class="breadcrumb">
+          <span>Environment Request</span>
+          <span class="breadcrumb-sep">&gt;</span>
+          <strong>Review &amp; Submit</strong>
+        </div>
+      </div>
+
+      <!-- ── Content Area ── -->
+      <div class="organism-content">
+
+        <!-- Page title -->
+        <div class="page-title-block">
+          <h1 class="page-title">Review &amp; Submit</h1>
+          <p class="page-subtitle">Confirm all workflow sections below before submitting your environment request for approval.</p>
+        </div>
+
+        <!-- Validation banner -->
+        <div class="validation-banner success">
+          <span class="banner-icon" style="color:var(--brand-color-success);">&#10003;</span>
+          <div class="banner-text">
+            <strong>All sections validated — ready to submit</strong>
+            All required fields have been completed and cross-validated. Review the summary below, then click <em>Submit for Approval</em>.
+          </div>
+        </div>
+
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <!-- Summary Section Cards                                           -->
+        <!-- ════════════════════════════════════════════════════════════════ -->
+        <div class="summary-sections">
+
+          <!-- ── 1. Program Details ─────────────────────────────────────── -->
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <div class="summary-card-header-left">
+                <span class="section-step-badge complete">✓</span>
+                <span class="summary-card-title">Enter Program Details</span>
+              </div>
+              <div class="summary-card-header-right">
+                <span class="summary-card-status complete">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="currentColor" opacity=".25"/><circle cx="5" cy="5" r="2.5" fill="currentColor"/></svg>
+                  Complete
+                </span>
+                <a href="ProgramDetails.html" class="edit-link">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Edit
+                </a>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <div class="kv-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                <div class="kv-item span-3">
+                  <span class="kv-label">Program Name</span>
+                  <span class="kv-value">HPC Defense Simulation Enclave</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Program Sector</span>
+                  <span class="kv-value">Aeronautics &amp; Systems</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Program Division</span>
+                  <span class="kv-value">Aeronautics Systems</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Program Approver</span>
+                  <span class="kv-value">Vance, Alex (Lead Engineer)</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Co-Owner(s)</span>
+                  <span class="kv-value">Alex Vance (Systems Lead)</span>
+                </div>
+                <div class="kv-item span-2">
+                  <span class="kv-label">Environment Description</span>
+                  <span class="kv-value">High-performance GPU simulation cluster for hypersonic aerodynamics testing and containerized workloads.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 2. Financial Details ───────────────────────────────────── -->
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <div class="summary-card-header-left">
+                <span class="section-step-badge complete">✓</span>
+                <span class="summary-card-title">Enter Financial Details</span>
+              </div>
+              <div class="summary-card-header-right">
+                <span class="summary-card-status complete">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="currentColor" opacity=".25"/><circle cx="5" cy="5" r="2.5" fill="currentColor"/></svg>
+                  Complete
+                </span>
+                <a href="FinancialDetails.html" class="edit-link">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Edit
+                </a>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <div class="kv-grid">
+                <div class="kv-item">
+                  <span class="kv-label">Cost Code</span>
+                  <span class="kv-value mono">CC-4821-HPC</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Job Number (JN)</span>
+                  <span class="kv-value mono">JN-2026-00147</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Organizational Code</span>
+                  <span class="kv-value mono">ORG-CIDO-HPC</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">IWO Number</span>
+                  <span class="kv-value mono">IWO-78214-B</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Funding Authority</span>
+                  <span class="kv-value">CIDO / HPC Division Budget FY-2026</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">WBS Allocation</span>
+                  <span class="kv-value mono">1.4.2.3 — Simulation Infrastructure</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 3. Set Up Cloud ────────────────────────────────────────── -->
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <div class="summary-card-header-left">
+                <span class="section-step-badge complete">✓</span>
+                <span class="summary-card-title">Set Up Cloud</span>
+              </div>
+              <div class="summary-card-header-right">
+                <span class="summary-card-status complete">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="currentColor" opacity=".25"/><circle cx="5" cy="5" r="2.5" fill="currentColor"/></svg>
+                  Complete
+                </span>
+                <a href="workflow.html?workflow=request_new_environment&id=ENV-2026-8941&task=computespecs" class="edit-link">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Edit
+                </a>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <p class="card-subsection-label">Compute Configuration</p>
+              <div class="kv-grid">
+                <div class="kv-item">
+                  <span class="kv-label">Instance Type</span>
+                  <span class="kv-value">GPU Compute Cluster<span class="inline-tag primary">GovCloud</span></span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Node Count</span>
+                  <span class="kv-value mono">8 nodes</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">vCPUs per Node</span>
+                  <span class="kv-value mono">48 vCPU</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Memory per Node</span>
+                  <span class="kv-value mono">192 GB DDR5</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">GPU Accelerators</span>
+                  <span class="kv-value">4× NVIDIA A100 (80 GB) per node</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Storage</span>
+                  <span class="kv-value mono">100 TB NVMe (shared)</span>
+                </div>
+              </div>
+              <hr class="card-section-divider">
+              <p class="card-subsection-label">Network &amp; Isolation</p>
+              <div class="kv-grid">
+                <div class="kv-item">
+                  <span class="kv-label">Network Fabric</span>
+                  <span class="kv-value">200 GbE InfiniBand HDR</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Enclave Isolation</span>
+                  <span class="kv-value">IL-4 Enclave<span class="inline-tag success">Isolated</span></span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Availability Zone</span>
+                  <span class="kv-value mono">us-gov-east-1a</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── 4. Choose Toolset(s) ───────────────────────────────────── -->
+          <div class="summary-card">
+            <div class="summary-card-header">
+              <div class="summary-card-header-left">
+                <span class="section-step-badge complete">✓</span>
+                <span class="summary-card-title">Choose Toolset(s)</span>
+              </div>
+              <div class="summary-card-header-right">
+                <span class="summary-card-status complete">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" fill="currentColor" opacity=".25"/><circle cx="5" cy="5" r="2.5" fill="currentColor"/></svg>
+                  Complete
+                </span>
+                <a href="workflow.html?workflow=request_new_environment&id=ENV-2026-8941&task=toolsets" class="edit-link">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                  Edit
+                </a>
+              </div>
+            </div>
+            <div class="summary-card-body">
+              <p class="card-subsection-label">Runtime Environment</p>
+              <div class="kv-grid" style="margin-bottom:var(--brand-size-md);">
+                <div class="kv-item">
+                  <span class="kv-label">Base Image</span>
+                  <span class="kv-value mono">CUDA 12.3 / Ubuntu 22.04 LTS</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">ML Framework</span>
+                  <span class="kv-value mono">PyTorch 2.2 + cuDNN 8.9</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">MPI Runtime</span>
+                  <span class="kv-value mono">OpenMPI 4.1.6</span>
+                </div>
+              </div>
+              <hr class="card-section-divider">
+              <p class="card-subsection-label">Selected SDK Containers &amp; Tools</p>
+              <div class="toolset-grid">
+                <span class="toolset-pill"><span class="pill-check">✓</span> HPC Simulation Stack v3.2</span>
+                <span class="toolset-pill"><span class="pill-check">✓</span> Defense Analytics Suite</span>
+                <span class="toolset-pill"><span class="pill-check">✓</span> VS Code Server 1.88</span>
+                <span class="toolset-pill"><span class="pill-check">✓</span> JupyterLab 4.1</span>
+                <span class="toolset-pill"><span class="pill-check">✓</span> Singularity / Apptainer 1.3</span>
+                <span class="toolset-pill"><span class="pill-check">✓</span> Slurm Workload Manager 23.x</span>
+                <span class="toolset-pill"><span class="pill-check">✓</span> NVIDIA Nsight Systems</span>
+              </div>
+              <hr class="card-section-divider">
+              <div class="kv-grid two-col">
+                <div class="kv-item">
+                  <span class="kv-label">Data Pipeline</span>
+                  <span class="kv-value">Apache Spark 3.5 (distributed)</span>
+                </div>
+                <div class="kv-item">
+                  <span class="kv-label">Version Control</span>
+                  <span class="kv-value">GitLab CE (on-enclave)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Cost Summary ─────────────────────────────────────────────── -->
+          <div class="cost-summary-card">
+            <div class="cost-summary-header">
+              <span class="cost-summary-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:5px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Estimated Monthly Cost Breakdown
+              </span>
+              <span style="font-family:var(--brand-font-family-mono);font-size:11px;color:var(--brand-color-primary-text);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">ID: ENV-2026-8941</span>
+            </div>
+            <div class="cost-summary-body">
+              <table class="cost-line-table">
+                <thead>
+                  <tr>
+                    <th>Line Item</th>
+                    <th>Description</th>
+                    <th style="text-align:right;">Monthly Est.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Base Fee</td>
+                    <td>GovCloud environment provisioning &amp; network baseline</td>
+                    <td class="amount">$5,400.00</td>
+                  </tr>
+                  <tr>
+                    <td>Compliance Levels</td>
+                    <td>IL-4 enclave isolation, FIPS 140-2 encryption, audit logging</td>
+                    <td class="amount">$1,200.00</td>
+                  </tr>
+                  <tr>
+                    <td>Accreditations</td>
+                    <td>ATO maintenance, STIG compliance scanning, vulnerability feeds</td>
+                    <td class="amount">$800.00</td>
+                  </tr>
+                  <tr>
+                    <td>On-Premises</td>
+                    <td>No hybrid on-prem connectivity selected</td>
+                    <td class="amount" style="color:var(--brand-color-text-secondary);">$0.00</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr class="total-row">
+                    <td colspan="2" style="color:var(--brand-color-primary);">Estimated Monthly Total</td>
+                    <td class="amount" style="color:var(--brand-color-primary);font-size:18px;">$7,400.00</td>
+                  </tr>
+                </tfoot>
+              </table>
+              <p style="margin-top:var(--brand-size-sm);font-size:var(--brand-font-size-sm);color:var(--brand-color-text-secondary);">
+                Estimates are based on current GovCloud rate schedules. Final billing is subject to actual usage and procurement approval.
+              </p>
+            </div>
+          </div>
+
+          <!-- ── Submit footer ──────────────────────────────────────────── -->
+          <div class="submit-footer">
+            <p class="submit-footer-note">
+              By submitting, you certify that all information is accurate and that this request complies with CIDO procurement policies. An approval notification will be sent to <strong>Vance, Alex (Lead Engineer)</strong>.
+            </p>
+            <div class="submit-footer-actions">
+              <button type="button" class="btn btn-secondary" onclick="window.location.href='workflow.html?workflow=request_new_environment&id=ENV-2026-8941&task=toolsets'">Back</button>
+              <button type="button" class="btn btn-primary btn-lg" onclick="openConfirmModal()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Submit for Approval
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /summary-sections -->
+      </div><!-- /organism-content -->
+    </main>
+  </div>
+
+  <!-- ── Confirm Submit Modal ──────────────────────────────────────────────── -->
+  <div class="modal-backdrop" id="confirm-modal">
+    <div class="confirm-modal">
+      <div class="confirm-modal-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--brand-color-primary)" stroke-width="2">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.61a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+      </div>
+      <h2 class="confirm-modal-title">Submit ENV-2026-8941 for Approval?</h2>
+      <p class="confirm-modal-body">
+        This will send the environment request to <strong>Vance, Alex (Lead Engineer)</strong> for review.<br>
+        You will receive a notification once the request has been approved or returned for revision.
+      </p>
+      <div class="confirm-modal-actions">
+        <button type="button" class="btn btn-secondary" style="min-width:110px;" onclick="closeConfirmModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" style="min-width:140px;" onclick="submitRequest()">
+          Confirm &amp; Submit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── User Profile Modal ─────────────────────────────────────────────────── -->
+  <div class="modal-backdrop" id="profile-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">User Profile &amp; Authorization</h3>
+        <button type="button" class="modal-close" onclick="toggleProfileModal()">&times;</button>
+      </div>
+      <div style="font-size:14px;color:var(--brand-color-text);margin-bottom:12px;">
+        <strong>User:</strong> Alex Vance (Senior Systems Engineer)
+      </div>
+      <div style="font-size:13px;color:var(--brand-color-text-secondary);margin-bottom:16px;">
+        <strong>Organization:</strong> CIDO / High-Performance Computing Division<br>
+        <strong>Clearance:</strong> Top Secret / SCI
+      </div>
+      <div style="background-color:var(--brand-color-bg-layout);border:1px solid var(--brand-color-border);border-radius:var(--brand-border-radius);padding:12px;font-size:13px;">
+        <strong>Active Role:</strong> <span style="color:var(--brand-color-primary);font-weight:700;">Owner</span>
+        <p style="margin-top:6px;color:var(--brand-color-text-secondary);">Owner role grants full workflow execution, request, edit, archive, and monitoring rights.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Classification Bar Bottom -->
+  <footer class="classification-bar bottom">UNCLASSIFIED</footer>
+
+  <script>
+    function toggleProfileModal() {
+      document.getElementById('profile-modal').classList.toggle('open');
+    }
+    function openConfirmModal() {
+      document.getElementById('confirm-modal').classList.add('open');
+    }
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').classList.remove('open');
+    }
+    function submitRequest() {
+      closeConfirmModal();
+      // In a real app, POST to API here
+      alert('Request ENV-2026-8941 submitted successfully. A notification has been sent to the approver.');
+    }
+  </script>
+</body>
+</html>
