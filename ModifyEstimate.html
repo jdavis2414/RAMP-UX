@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ramp — Edit Cost Estimate · CE-8901-EST</title>
+  <style>
+    /* ── Brand token layer ───────────────────────────────────────────────── */
+    :root {
+      --brand-color-primary:          #1677ff;
+      --brand-color-primary-bg:       #e6f4ff;
+      --brand-color-primary-bg-hover: #bae0ff;
+      --brand-color-primary-border:   #91caff;
+      --brand-color-primary-hover:    #4096ff;
+      --brand-color-primary-active:   #0958d9;
+      --brand-color-success:          #52c41a;
+      --brand-color-success-bg:       #f6ffed;
+      --brand-color-success-border:   #b6eb8f;
+      --brand-color-warning:          #faad14;
+      --brand-color-warning-bg:       #fffbe6;
+      --brand-color-warning-border:   #ffe58f;
+      --brand-color-warning-dark:     #874d00;
+      --brand-color-error:            #ff4d4f;
+      --brand-color-error-bg:         #fff2f0;
+      --brand-color-error-border:     #ffccc7;
+      --brand-color-text:             #111111;
+      --brand-color-text-secondary:   #6b7280;
+      --brand-color-text-tertiary:    #949494;
+      --brand-color-bg-layout:        #f7f8fa;
+      --brand-color-bg-container:     #ffffff;
+      --brand-color-border:           #d9dee7;
+      --brand-color-border-secondary: #f1f1f1;
+
+      --brand-font-family:      'Inter', system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --brand-font-family-mono: ui-monospace, 'JetBrains Mono', 'IBM Plex Mono', monospace;
+      --brand-font-size:          14px;
+      --brand-font-size-sm:       12px;
+      --brand-font-size-lg:       18px;
+      --brand-font-weight-strong: 600;
+
+      --brand-border-radius:    8px;
+      --brand-border-radius-sm: 5px;
+      --brand-border-radius-lg: 10px;
+
+      --brand-size-xxs: 4px;
+      --brand-size-xs:  8px;
+      --brand-size-sm:  12px;
+      --brand-size:     16px;
+      --brand-size-md:  20px;
+      --brand-size-lg:  24px;
+      --brand-size-xl:  32px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--brand-color-bg-container);
+      color: var(--brand-color-text);
+      font-family: var(--brand-font-family);
+      font-size: 15px;
+      line-height: 1.5;
+      padding-top: 28px;
+      padding-bottom: 28px;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .classification-bar {
+      position: fixed; left: 0; right: 0; height: 28px;
+      background-color: #006622; color: #ffffff;
+      font-family: var(--brand-font-family-mono);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000;
+    }
+    .classification-bar.top { top: 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
+    .classification-bar.bottom { bottom: 0; border-top: 1px solid rgba(255,255,255,0.2); }
+
+    .appbar {
+      height: 64px; background-color: #111111;
+      border-bottom: 1px solid var(--brand-color-border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+      position: sticky; top: 28px; z-index: 900; flex-shrink: 0;
+    }
+
+    .appbar-brand {
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: #ffffff;
+    }
+
+    .appbar-logo-mark {
+      width: 32px; height: 32px;
+      background-color: #ffffff; color: #111111;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px;
+      border-radius: var(--brand-border-radius);
+    }
+
+    .appbar-title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; color: #ffffff; }
+    .appbar-actions { display: flex; align-items: center; gap: 16px; }
+
+    .ng-brand-wrapper { position: relative; display: inline-block; padding-top: 6px; padding-right: 10px; }
+    .ng-brand-name { font-size: 11px; font-weight: 800; letter-spacing: 0.1em; color: #ffffff; text-transform: uppercase; line-height: 1.2; display: block; }
+    .ng-brand-bracket { position: absolute; top: 0; right: 0; width: 10px; height: 10px; border-top: 3px solid #ffffff; border-right: 3px solid #ffffff; }
+
+    .profile-btn {
+      width: 36px; height: 36px; border-radius: var(--brand-border-radius);
+      border: 1px solid rgba(255,255,255,0.2); background-color: transparent;
+      color: #ffffff; display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+
+    /* Edit mode banner — blue primary tone (not amber — this is a draft, not a live env) */
+    .edit-banner {
+      background-color: var(--brand-color-primary-bg);
+      border-bottom: 1px solid var(--brand-color-primary-border);
+      padding: 10px 24px;
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .edit-banner-icon {
+      width: 28px; height: 28px;
+      background-color: var(--brand-color-primary);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #ffffff; font-weight: 800; font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .edit-banner-title { font-size: 13px; font-weight: 700; color: var(--brand-color-primary-active); }
+    .edit-banner-sub { font-size: 12px; color: var(--brand-color-text-secondary); }
+
+    .edit-banner-badge {
+      font-family: var(--brand-font-family-mono);
+      font-size: 11px; font-weight: 700;
+      padding: 3px 10px;
+      background-color: var(--brand-color-primary);
+      color: #ffffff; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+
+    .app-layout { display: flex; flex: 1; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px; flex-shrink: 0;
+      background-color: var(--brand-color-bg-layout);
+      border-right: 1px solid var(--brand-color-border);
+      overflow-y: auto; padding: var(--brand-size-sm) 0;
+      display: flex; flex-direction: column; gap: var(--brand-size-xs);
+    }
+
+    .nav-section-label {
+      font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--brand-color-text-tertiary);
+      padding: var(--brand-size-xs) var(--brand-size); display: block;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px var(--brand-size); font-size: 13px; font-weight: 500;
+      color: var(--brand-color-text-secondary);
+      cursor: pointer; border-left: 3px solid transparent;
+      transition: background-color 0.1s;
+    }
+    .nav-item:hover { background-color: var(--brand-color-bg-container); color: var(--brand-color-text); }
+    .nav-item.active { background-color: var(--brand-color-bg-container); color: var(--brand-color-primary-active); border-left-color: var(--brand-color-primary); font-weight: 600; }
+
+    .nav-icon { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; }
+    .nav-icon.primary { background-color: var(--brand-color-primary); color: #ffffff; }
+    .nav-icon.muted { background-color: var(--brand-color-border); color: var(--brand-color-text-secondary); }
+
+    hr.nav-divider { border: none; border-top: 1px solid var(--brand-color-border); margin: var(--brand-size-xs) var(--brand-size); }
+
+    /* Main content */
+    .main-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+    /* Header */
+    .page-header {
+      background-color: var(--brand-color-bg-container);
+      border-bottom: 1px solid var(--brand-color-border);
+      padding: var(--brand-size-sm) var(--brand-size-lg);
+      flex-shrink: 0;
+    }
+
+    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--brand-color-text-secondary); padding-bottom: var(--brand-size-xs); }
+    .breadcrumb a { color: var(--brand-color-primary); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--brand-color-border); }
+    .breadcrumb-current { font-weight: var(--brand-font-weight-strong); color: var(--brand-color-text); }
+
+    .estimate-title-row { display: flex; align-items: center; gap: var(--brand-size-xs); padding-top: 2px; }
+    .estimate-name { font-size: var(--brand-font-size-lg); font-weight: 700; }
+    .status-chip { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .status-chip.draft { background-color: var(--brand-color-warning-bg); color: var(--brand-color-warning-dark); border: 1px solid var(--brand-color-warning-border); }
+
+    .header-meta-bar { display: flex; align-items: center; gap: var(--brand-size-lg); padding-top: var(--brand-size-xs); border-top: 1px solid var(--brand-color-border-secondary); margin-top: var(--brand-size-xs); }
+    .meta-item { display: flex; flex-direction: column; }
+    .meta-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand-color-text-tertiary); }
+    .meta-value { font-family: var(--brand-font-family-mono); font-size: var(--brand-font-size); font-weight: 700; }
+    .meta-divider { width: 1px; height: 28px; background-color: var(--brand-color-border); }
+
+    /* Content split */
+    .content-split { display: flex; flex: 1; overflow: hidden; }
+
+    .form-column { flex: 1; overflow-y: auto; padding: var(--brand-size-lg) var(--brand-size-xl); }
+
+    /* Estimate sections */
+    .est-section {
+      background-color: var(--brand-color-bg-container);
+      border: 1px solid var(--brand-color-border);
+      border-radius: var(--brand-border-radius);
+      margin-bottom: var(--brand-size);
+      overflow: hidden;
+    }
+
+    .est-section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: var(--brand-size-sm) var(--brand-size);
+      cursor: pointer; background-color: var(--brand-color-bg-layout);
+      border-bottom: 1px solid var(--brand-color-border);
+      user-select: none;
+    }
+
+    .est-section-header:hover { background-color: #eef0f5; }
+
+    .est-section-title-group { display: flex; align-items: center; gap: var(--brand-size-xs); }
+    .est-section-step { width: 22px; height: 22px; border-radius: 50%; background-color: var(--brand-color-primary); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .est-section-title { font-size: var(--brand-font-size); font-weight: 700; }
+    .est-section-subtitle { font-size: var(--brand-font-size-sm); color: var(--brand-color-text-secondary); }
+    .est-section-chevron { color: var(--brand-color-text-secondary); transition: transform 0.2s; }
+    .est-section.collapsed .est-section-chevron { transform: rotate(-90deg); }
+
+    .est-section-body { padding: var(--brand-size); display: grid; grid-template-columns: 1fr 1fr; gap: var(--brand-size-sm); }
+    .est-section-body.single { grid-template-columns: 1fr; }
+    .est-section.collapsed .est-section-body { display: none; }
+
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label { font-size: var(--brand-font-size-sm); font-weight: var(--brand-font-weight-strong); color: var(--brand-color-text); }
+    .form-label.ro { color: var(--brand-color-text-secondary); }
+
+    .form-control {
+      padding: 8px 12px; border: 1px solid var(--brand-color-border);
+      border-radius: var(--brand-border-radius-sm);
+      font-family: var(--brand-font-family);
+      font-size: var(--brand-font-size); color: var(--brand-color-text);
+      background-color: var(--brand-color-bg-container); width: 100%;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .form-control:focus { outline: none; border-color: var(--brand-color-primary); box-shadow: 0 0 0 3px var(--brand-color-primary-bg); }
+    .form-control.ro { background-color: var(--brand-color-bg-layout); color: var(--brand-color-text-secondary); cursor: default; }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px;
+    }
+
+    .form-hint { font-size: 11px; color: var(--brand-color-text-tertiary); }
+
+    /* Right panel */
+    .impact-panel {
+      width: 340px; flex-shrink: 0;
+      background-color: var(--brand-color-bg-layout);
+      border-left: 1px solid var(--brand-color-border);
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+
+    .impact-panel-header {
+      padding: var(--brand-size-sm) var(--brand-size);
+      border-bottom: 1px solid var(--brand-color-border);
+      display: flex; align-items: center; gap: 8px;
+      background-color: var(--brand-color-bg-container); flex-shrink: 0;
+    }
+
+    .impact-panel-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .impact-panel-body { flex: 1; overflow-y: auto; padding: var(--brand-size-sm); display: flex; flex-direction: column; gap: var(--brand-size-sm); }
+
+    .impact-card { background-color: var(--brand-color-bg-container); border: 1px solid var(--brand-color-border); border-radius: var(--brand-border-radius); overflow: hidden; }
+    .impact-card-header { padding: 8px var(--brand-size-sm); border-bottom: 1px solid var(--brand-color-border-secondary); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--brand-color-text-secondary); background-color: var(--brand-color-bg-layout); }
+    .impact-card-body { padding: var(--brand-size-sm); }
+
+    .cost-compare { display: grid; grid-template-columns: 1fr 1fr; gap: var(--brand-size-xs); margin-bottom: var(--brand-size-xs); }
+    .cost-compare-item { display: flex; flex-direction: column; gap: 2px; }
+    .cost-compare-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--brand-color-text-tertiary); }
+    .cost-compare-value { font-family: var(--brand-font-family-mono); font-size: var(--brand-font-size-lg); font-weight: 700; }
+    .cost-compare-value.proposed { color: var(--brand-color-primary); }
+
+    .delta-bar { padding: 7px var(--brand-size-xs); border-radius: var(--brand-border-radius-sm); display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; }
+    .delta-bar.up { background-color: var(--brand-color-error-bg); color: var(--brand-color-error); border: 1px solid var(--brand-color-error-border); }
+    .delta-bar.down { background-color: var(--brand-color-success-bg); color: var(--brand-color-success); border: 1px solid var(--brand-color-success-border); }
+    .delta-bar.flat { background-color: var(--brand-color-bg-layout); color: var(--brand-color-text-secondary); border: 1px solid var(--brand-color-border); }
+
+    /* Breakdown table */
+    .bd-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .bd-table td { padding: 4px 0; }
+    .bd-table td:last-child { text-align: right; font-family: var(--brand-font-family-mono); font-weight: 600; }
+    .bd-table td.label { color: var(--brand-color-text-secondary); }
+    .bd-table tr.total td { padding-top: 8px; font-weight: 700; border-top: 1px solid var(--brand-color-border); }
+    .bd-table tr.total td:last-child { color: var(--brand-color-primary); }
+
+    /* Impact flags */
+    .flag-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+    .flag-item { display: flex; gap: 8px; padding: 8px; border-radius: var(--brand-border-radius-sm); font-size: 12px; line-height: 1.5; }
+    .flag-item.info { background-color: var(--brand-color-primary-bg); border: 1px solid var(--brand-color-primary-border); }
+    .flag-item.ok { background-color: var(--brand-color-success-bg); border: 1px solid var(--brand-color-success-border); }
+    .flag-item.warn { background-color: var(--brand-color-warning-bg); border: 1px solid var(--brand-color-warning-border); }
+
+    .flag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .flag-item.info .flag-dot { background-color: var(--brand-color-primary); }
+    .flag-item.ok .flag-dot { background-color: var(--brand-color-success); }
+    .flag-item.warn .flag-dot { background-color: var(--brand-color-warning); }
+
+    .flag-label { font-weight: 700; display: block; }
+
+    /* Approval path */
+    .approval-path { display: flex; flex-direction: column; gap: 6px; }
+    .approval-step {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; padding: 6px;
+      border-radius: var(--brand-border-radius-sm);
+    }
+    .approval-step.active { background-color: var(--brand-color-primary-bg); border: 1px solid var(--brand-color-primary-border); color: var(--brand-color-text); }
+    .approval-step.pending { background-color: var(--brand-color-bg-layout); border: 1px solid var(--brand-color-border); color: var(--brand-color-text-secondary); }
+    .approval-step-num { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+    .approval-step.active .approval-step-num { background-color: var(--brand-color-primary); color: #ffffff; }
+    .approval-step.pending .approval-step-num { background-color: var(--brand-color-border); color: var(--brand-color-text-secondary); }
+
+    /* Action footer */
+    .action-footer {
+      border-top: 1px solid var(--brand-color-border);
+      padding: var(--brand-size-sm) var(--brand-size-xl);
+      background-color: var(--brand-color-bg-container);
+      display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+    }
+
+    .footer-note { font-size: var(--brand-font-size-sm); color: var(--brand-color-text-secondary); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; font-family: var(--brand-font-family);
+      font-size: var(--brand-font-size); font-weight: 600;
+      border-radius: var(--brand-border-radius); cursor: pointer;
+      border: 1px solid transparent; transition: all 0.15s;
+    }
+
+    .btn-primary { background-color: var(--brand-color-primary); color: #ffffff; }
+    .btn-primary:hover { background-color: var(--brand-color-primary-hover); }
+    .btn-secondary { background-color: var(--brand-color-bg-container); color: var(--brand-color-text); border-color: var(--brand-color-border); }
+    .btn-secondary:hover { background-color: var(--brand-color-bg-layout); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+    .btn-group { display: flex; gap: var(--brand-size-xs); }
+
+    /* Modal */
+    .modal-backdrop { position: fixed; inset: 0; background-color: rgba(17,17,17,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; }
+    .modal-backdrop.open { display: flex; }
+    .modal { background-color: var(--brand-color-bg-container); border: 1px solid var(--brand-color-border); border-radius: var(--brand-border-radius-lg); width: 100%; max-width: 500px; padding: var(--brand-size-lg); box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--brand-size-sm); padding-bottom: var(--brand-size-sm); border-bottom: 1px solid var(--brand-color-border); }
+    .modal-title { font-size: var(--brand-font-size-lg); font-weight: 700; }
+    .modal-close { background: none; border: none; color: var(--brand-color-text-secondary); font-size: 20px; cursor: pointer; }
+    .modal-body { font-size: var(--brand-font-size); }
+    .modal-footer { display: flex; justify-content: flex-end; gap: var(--brand-size-xs); margin-top: var(--brand-size); padding-top: var(--brand-size-sm); border-top: 1px solid var(--brand-color-border); }
+
+    .change-summary-box { background-color: var(--brand-color-bg-layout); border: 1px solid var(--brand-color-border); border-radius: var(--brand-border-radius); padding: var(--brand-size-sm); margin: var(--brand-size-sm) 0; }
+    .change-row { display: flex; align-items: baseline; gap: 8px; font-size: 13px; padding: 3px 0; }
+    .change-row-label { color: var(--brand-color-text-secondary); font-size: 12px; min-width: 110px; }
+    .tag-old { font-family: var(--brand-font-family-mono); font-size: 12px; background-color: var(--brand-color-error-bg); color: var(--brand-color-error); padding: 1px 5px; border-radius: 3px; text-decoration: line-through; }
+    .tag-new { font-family: var(--brand-font-family-mono); font-size: 12px; background-color: var(--brand-color-success-bg); color: var(--brand-color-success); padding: 1px 5px; border-radius: 3px; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 48px; right: 24px; background-color: #111111; color: #ffffff; padding: var(--brand-size-sm) var(--brand-size); border-radius: var(--brand-border-radius); font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 8px; opacity: 0; transform: translateY(8px); transition: opacity 0.3s, transform 0.3s; z-index: 3000; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body>
+
+  <header class="classification-bar top">UNCLASSIFIED</header>
+
+  <nav class="appbar">
+    <a href="index.html" class="appbar-brand">
+      <div class="appbar-logo-mark">R</div>
+      <span class="appbar-title">Ramp</span>
+    </a>
+    <div class="appbar-actions">
+      <div style="display:flex;align-items:center;margin-right:8px;">
+        <div class="ng-brand-wrapper">
+          <span class="ng-brand-name">NORTHROP GRUMMAN</span>
+          <div class="ng-brand-bracket"></div>
+        </div>
+      </div>
+      <button type="button" class="profile-btn" title="Alex Vance — TS/SCI">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Edit mode banner -->
+  <div class="edit-banner">
+    <div class="edit-banner-icon">✎</div>
+    <div style="flex:1;">
+      <div class="edit-banner-title">Editing Cost Estimate — CE-8901-EST</div>
+      <div class="edit-banner-sub">Adjust compute parameters to refine this estimate. Changes here do not affect any live environment. Saving will update the estimate and may trigger an approval re-review.</div>
+    </div>
+    <span class="edit-banner-badge">Draft Estimate</span>
+  </div>
+
+  <div class="app-layout">
+
+    <!-- Sidebar nav -->
+    <aside class="sidebar">
+      <span class="nav-section-label">Estimate Sections</span>
+      <div class="nav-item active" onclick="scrollTo('sec-scope')">
+        <span class="nav-icon primary">1</span> Scope &amp; Program
+      </div>
+      <div class="nav-item" onclick="scrollTo('sec-compute')">
+        <span class="nav-icon muted">2</span> Compute Parameters
+      </div>
+      <div class="nav-item" onclick="scrollTo('sec-financial')">
+        <span class="nav-icon muted">3</span> Financial Codes
+      </div>
+      <div class="nav-item" onclick="scrollTo('sec-toolsets')">
+        <span class="nav-icon muted">4</span> Toolsets
+      </div>
+
+      <hr class="nav-divider">
+      <span class="nav-section-label">Estimate Impact</span>
+      <div class="nav-item" style="flex-direction:column;align-items:flex-start;gap:4px;cursor:default;">
+        <div style="font-size:11px;color:var(--brand-color-text-secondary);">Cost delta</div>
+        <div id="nav-delta" style="font-family:var(--brand-font-family-mono);font-size:13px;font-weight:700;color:var(--brand-color-text-secondary);">No changes</div>
+      </div>
+      <div class="nav-item" style="flex-direction:column;align-items:flex-start;gap:4px;cursor:default;">
+        <div style="font-size:11px;color:var(--brand-color-text-secondary);">Approval path</div>
+        <div id="nav-approval-path" style="font-size:13px;font-weight:700;color:var(--brand-color-text-secondary);">Standard</div>
+      </div>
+      <div class="nav-item" style="flex-direction:column;align-items:flex-start;gap:4px;cursor:default;">
+        <div style="font-size:11px;color:var(--brand-color-text-secondary);">Status after save</div>
+        <div id="nav-status-after" style="font-size:13px;font-weight:700;color:var(--brand-color-text-secondary);">Draft</div>
+      </div>
+    </aside>
+
+    <div class="main-content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <nav class="breadcrumb">
+          <a href="index.html">Home</a>
+          <span class="breadcrumb-sep">›</span>
+          <a href="index.html">Cost Estimates</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current">Edit CE-8901-EST</span>
+        </nav>
+        <div class="estimate-title-row">
+          <span class="estimate-name">Avionics Simulation Cluster</span>
+          <span class="status-chip draft">Draft</span>
+        </div>
+        <div class="header-meta-bar">
+          <div class="meta-item">
+            <span class="meta-label">Estimate ID</span>
+            <span class="meta-value">CE-8901-EST</span>
+          </div>
+          <div class="meta-divider"></div>
+          <div class="meta-item">
+            <span class="meta-label">Current Estimate</span>
+            <span class="meta-value">$4,250 <span style="font-size:11px;font-weight:400;color:var(--brand-color-text-secondary);">/ mo</span></span>
+          </div>
+          <div class="meta-divider"></div>
+          <div class="meta-item">
+            <span class="meta-label">Revised Estimate</span>
+            <span class="meta-value" id="revised-header" style="color:var(--brand-color-primary);">$4,250 / mo</span>
+          </div>
+          <div class="meta-divider"></div>
+          <div class="meta-item">
+            <span class="meta-label">Created</span>
+            <span class="meta-value" style="font-size:13px;">Jan 8, 2026</span>
+          </div>
+          <div class="meta-divider"></div>
+          <div class="meta-item">
+            <span class="meta-label">Last Saved</span>
+            <span class="meta-value" style="font-size:13px;">Feb 22, 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-split">
+
+        <!-- Form column -->
+        <div class="form-column" id="form-col">
+
+          <!-- Section 1: Scope & Program -->
+          <div class="est-section" id="sec-scope">
+            <div class="est-section-header" onclick="toggleSection('sec-scope')">
+              <div class="est-section-title-group">
+                <span class="est-section-step" style="background-color:var(--brand-color-success);">✓</span>
+                <div>
+                  <div class="est-section-title">Scope &amp; Program</div>
+                  <div class="est-section-subtitle">Program context and estimate description</div>
+                </div>
+              </div>
+              <svg class="est-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="est-section-body">
+              <div class="form-group">
+                <label class="form-label">Estimate Name</label>
+                <input type="text" class="form-control" value="Avionics Simulation Cluster" oninput="markChanged()">
+              </div>
+              <div class="form-group">
+                <label class="form-label ro">Program</label>
+                <input type="text" class="form-control ro" value="Aeronautics &amp; Systems — CIDO" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label ro">Requester</label>
+                <input type="text" class="form-control ro" value="Vance, Alex (Lead Engineer)" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Target Use Date</label>
+                <input type="date" class="form-control" value="2026-09-01" oninput="markChanged()">
+              </div>
+              <div class="form-group full">
+                <label class="form-label">Scope Description</label>
+                <textarea class="form-control" rows="2" oninput="markChanged()">High-memory GPU cluster for flight dynamics modeling, avionics sensor fusion, and real-time HIL simulation workloads.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Compute Parameters -->
+          <div class="est-section" id="sec-compute">
+            <div class="est-section-header" onclick="toggleSection('sec-compute')">
+              <div class="est-section-title-group">
+                <span class="est-section-step">2</span>
+                <div>
+                  <div class="est-section-title">Compute Parameters</div>
+                  <div class="est-section-subtitle">Adjusting these values recalculates the estimate in real-time</div>
+                </div>
+              </div>
+              <svg class="est-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="est-section-body">
+              <div class="form-group">
+                <label class="form-label">Node Count</label>
+                <input type="number" id="node-count" class="form-control" value="8" min="1" max="128" oninput="recalculate()">
+                <span class="form-hint">Current baseline: 8 nodes</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">vCPU per Node</label>
+                <select id="vcpu" class="form-control" onchange="recalculate()">
+                  <option value="16">16 vCPU</option>
+                  <option value="24">24 vCPU</option>
+                  <option value="32" selected>32 vCPU</option>
+                  <option value="48">48 vCPU</option>
+                  <option value="64">64 vCPU</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Memory per Node</label>
+                <select id="memory" class="form-control" onchange="recalculate()">
+                  <option value="64">64 GB DDR5</option>
+                  <option value="128">128 GB DDR5</option>
+                  <option value="256" selected>256 GB DDR5</option>
+                  <option value="512">512 GB DDR5</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">GPU per Node</label>
+                <select id="gpu" class="form-control" onchange="recalculate()">
+                  <option value="0">None</option>
+                  <option value="1" selected>1× NVIDIA A100 80GB</option>
+                  <option value="2">2× NVIDIA A100 80GB</option>
+                  <option value="4">4× NVIDIA A100 80GB</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Storage (TB NVMe)</label>
+                <input type="number" id="storage" class="form-control" value="30" min="1" max="2000" oninput="recalculate()">
+                <span class="form-hint">Baseline: 30 TB</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Network Fabric</label>
+                <select id="network" class="form-control" onchange="recalculate()">
+                  <option value="0">10GbE Ethernet</option>
+                  <option value="10">100GbE Ethernet</option>
+                  <option value="40" selected>400GbE InfiniBand</option>
+                  <option value="60">HDR InfiniBand</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Enclave Level</label>
+                <select id="enclave" class="form-control" onchange="recalculate()">
+                  <option value="500">IL-2</option>
+                  <option value="1000" selected>IL-4</option>
+                  <option value="1800">IL-5</option>
+                  <option value="3200">IL-6</option>
+                </select>
+                <span class="form-hint">Enclave determines compliance add-on cost</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Deployment Region</label>
+                <select class="form-control" onchange="markChanged()">
+                  <option selected>us-gov-east-1a</option>
+                  <option>us-gov-west-2a</option>
+                  <option>us-gov-central-1b</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Financial Codes -->
+          <div class="est-section" id="sec-financial">
+            <div class="est-section-header" onclick="toggleSection('sec-financial')">
+              <div class="est-section-title-group">
+                <span class="est-section-step">3</span>
+                <div>
+                  <div class="est-section-title">Financial Codes</div>
+                  <div class="est-section-subtitle">Funding references for this estimate</div>
+                </div>
+              </div>
+              <svg class="est-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="est-section-body">
+              <div class="form-group">
+                <label class="form-label">Cost Code</label>
+                <input type="text" class="form-control" value="CC-4820-AV" oninput="markChanged()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Job Number (JN)</label>
+                <input type="text" class="form-control" value="JN-2026-00144" oninput="markChanged()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Organizational Code</label>
+                <input type="text" class="form-control" value="ORG-AS-AV01" oninput="markChanged()">
+              </div>
+              <div class="form-group">
+                <label class="form-label">IWO Number</label>
+                <input type="text" class="form-control" value="IWO-78210-A" oninput="markChanged()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 4: Toolsets -->
+          <div class="est-section" id="sec-toolsets">
+            <div class="est-section-header" onclick="toggleSection('sec-toolsets')">
+              <div class="est-section-title-group">
+                <span class="est-section-step">4</span>
+                <div>
+                  <div class="est-section-title">Toolsets</div>
+                  <div class="est-section-subtitle">Planned runtimes (informational — affects estimate notes)</div>
+                </div>
+              </div>
+              <svg class="est-section-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="est-section-body single">
+              <div class="form-group">
+                <label class="form-label">Planned Toolset Stack (notes)</label>
+                <textarea class="form-control" rows="3" oninput="markChanged()">CUDA 12.3 / Ubuntu 22.04, MATLAB R2024b, Simulink, ROS 2 Humble, OpenMPI 4.1.6</textarea>
+                <span class="form-hint">These toolsets are noted for planning — finalized during environment provisioning.</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="height:80px;"></div>
+        </div><!-- /form-col -->
+
+        <!-- Impact panel -->
+        <aside class="impact-panel">
+          <div class="impact-panel-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--brand-color-primary)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span class="impact-panel-title">Estimate Impact</span>
+          </div>
+
+          <div class="impact-panel-body">
+
+            <!-- Cost estimate compare -->
+            <div class="impact-card">
+              <div class="impact-card-header">Cost Estimate Comparison</div>
+              <div class="impact-card-body">
+                <div class="cost-compare">
+                  <div class="cost-compare-item">
+                    <span class="cost-compare-label">Current</span>
+                    <span class="cost-compare-value">$4,250</span>
+                    <span style="font-size:10px;color:var(--brand-color-text-tertiary);">/ month</span>
+                  </div>
+                  <div class="cost-compare-item">
+                    <span class="cost-compare-label">Revised</span>
+                    <span class="cost-compare-value proposed" id="revised-cost">$4,250</span>
+                    <span style="font-size:10px;color:var(--brand-color-text-tertiary);">/ month</span>
+                  </div>
+                </div>
+                <div class="delta-bar flat" id="delta-bar">
+                  <span id="delta-label">No changes yet</span>
+                  <span id="delta-pct" style="font-size:11px;font-weight:600;opacity:0.8;"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cost breakdown -->
+            <div class="impact-card">
+              <div class="impact-card-header">Cost Breakdown</div>
+              <div class="impact-card-body">
+                <table class="bd-table">
+                  <tr><td class="label">Compute (nodes)</td><td id="bd-compute">$2,800</td></tr>
+                  <tr><td class="label">GPU premium</td><td id="bd-gpu">$640</td></tr>
+                  <tr><td class="label">Network fabric</td><td id="bd-net">$320</td></tr>
+                  <tr><td class="label">Storage</td><td id="bd-storage">$120</td></tr>
+                  <tr><td class="label">Compliance / Enclave</td><td id="bd-comply">$370</td></tr>
+                  <tr class="total"><td>Total (revised)</td><td id="bd-total">$4,250</td></tr>
+                </table>
+              </div>
+            </div>
+
+            <!-- Status impact -->
+            <div class="impact-card">
+              <div class="impact-card-header">Status &amp; Approval Impact</div>
+              <div class="impact-card-body">
+                <ul class="flag-list" id="flag-list">
+                  <li class="flag-item info">
+                    <span class="flag-dot"></span>
+                    <div>
+                      <span class="flag-label">Draft — no approvals required yet</span>
+                      <span style="display:block;font-size:11px;color:var(--brand-color-text-secondary);">Make changes above. If total estimate changes significantly, you'll be notified of approval requirements on save.</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Approval path -->
+            <div class="impact-card">
+              <div class="impact-card-header">Approval Path (on submission)</div>
+              <div class="impact-card-body">
+                <div class="approval-path" id="approval-path">
+                  <div class="approval-step active">
+                    <div class="approval-step-num">1</div>
+                    <div>
+                      <div style="font-weight:600;">Program Lead Review</div>
+                      <div style="font-size:11px;color:var(--brand-color-text-secondary);">Vance, Alex — est. 1–2 days</div>
+                    </div>
+                  </div>
+                  <div class="approval-step pending">
+                    <div class="approval-step-num">2</div>
+                    <div>
+                      <div style="font-weight:600;">Finance Officer Sign-off</div>
+                      <div style="font-size:11px;color:var(--brand-color-text-secondary);">CIDO Budget Team — est. 2–3 days</div>
+                    </div>
+                  </div>
+                  <div class="approval-step pending">
+                    <div class="approval-step-num">3</div>
+                    <div>
+                      <div style="font-weight:600;">Approved Spec</div>
+                      <div style="font-size:11px;color:var(--brand-color-text-secondary);">Estimate locks and can be converted to an environment request.</div>
+                    </div>
+                  </div>
+                </div>
+                <div style="margin-top:8px;font-size:11px;color:var(--brand-color-text-tertiary);" id="approval-note">
+                  Standard approval path for estimates under $10,000/mo.
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /impact-panel-body -->
+        </aside>
+
+      </div><!-- /content-split -->
+
+      <!-- Action footer -->
+      <div class="action-footer">
+        <div class="footer-note" id="footer-note">No changes — edit parameters above to begin.</div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" onclick="cancelEdit()">Cancel</button>
+          <button type="button" class="btn btn-secondary" id="save-draft-btn" disabled onclick="saveDraft()">
+            Save Draft
+          </button>
+          <button type="button" class="btn btn-primary" id="submit-btn" disabled onclick="openSubmitModal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Save &amp; Submit for Approval
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /main-content -->
+  </div><!-- /app-layout -->
+
+  <footer class="classification-bar bottom">UNCLASSIFIED</footer>
+
+  <!-- Submit confirmation modal -->
+  <div class="modal-backdrop" id="submit-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Submit Estimate for Approval</h3>
+        <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>You are submitting <strong>CE-8901-EST — Avionics Simulation Cluster</strong> for approval review.</p>
+        <div class="change-summary-box" id="change-summary-box">
+          <!-- populated by JS -->
+        </div>
+        <p style="font-size:13px;color:var(--brand-color-text-secondary);">
+          Once submitted, the estimate will enter the approval queue. You can recall it before approval is granted if further changes are needed.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Go Back</button>
+        <button type="button" class="btn btn-primary" onclick="confirmSubmit()">
+          Confirm Submission
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    <span id="toast-text"></span>
+  </div>
+
+  <script>
+    // ── Baseline ──────────────────────────────────────────────────────────────
+    const BASE = { nodes: 8, gpu: 1, storage: 30, networkCost: 40, enclaveCost: 1000, currentEstimate: 4250 };
+    // Baseline breakdown:
+    // compute: 8 × 350 = 2800
+    // gpu: 8 × 1 × 80 = 640
+    // net: 8 × 40 = 320
+    // storage: 30 × 4 = 120
+    // comply: 1000 + 600 - 1230 = ... let's just use accreditation 370 to sum to 4250
+    // 2800 + 640 + 320 + 120 + comply = 4250 → comply = 370
+    const BASE_COMPLY = 370;
+
+    let changed = false;
+
+    function calcEstimate() {
+      const nodes   = parseInt(document.getElementById('node-count').value) || 0;
+      const gpu     = parseInt(document.getElementById('gpu').value) || 0;
+      const storage = parseInt(document.getElementById('storage').value) || 0;
+      const netCost = parseInt(document.getElementById('network').value) || 0;
+      const enclave = parseInt(document.getElementById('enclave').value) || 0;
+
+      const compute = nodes * 350;
+      const gpuCost = nodes * gpu * 80;
+      const net     = nodes * netCost;
+      const sto     = storage * 4;
+      const comply  = Math.round(enclave * 0.37);
+
+      return { compute, gpuCost, net, sto, comply, total: compute + gpuCost + net + sto + comply };
+    }
+
+    function recalculate() {
+      markChanged();
+      const est = calcEstimate();
+      const delta = est.total - BASE.currentEstimate;
+      const pct = ((delta / BASE.currentEstimate) * 100).toFixed(1);
+
+      // Header + panel
+      document.getElementById('revised-cost').textContent = `$${est.total.toLocaleString()}`;
+      document.getElementById('revised-header').textContent = `$${est.total.toLocaleString()} / mo`;
+
+      // Delta bar
+      const bar = document.getElementById('delta-bar');
+      const lbl = document.getElementById('delta-label');
+      const pctEl = document.getElementById('delta-pct');
+      bar.className = 'delta-bar ' + (delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat');
+      lbl.textContent = delta === 0 ? 'No cost change' : (delta > 0 ? `+$${delta.toLocaleString()} / mo` : `-$${Math.abs(delta).toLocaleString()} / mo`);
+      pctEl.textContent = delta !== 0 ? `${delta > 0 ? '+' : ''}${pct}%` : '';
+
+      // Breakdown
+      document.getElementById('bd-compute').textContent = `$${est.compute.toLocaleString()}`;
+      document.getElementById('bd-gpu').textContent = `$${est.gpuCost.toLocaleString()}`;
+      document.getElementById('bd-net').textContent = `$${est.net.toLocaleString()}`;
+      document.getElementById('bd-storage').textContent = `$${est.sto.toLocaleString()}`;
+      document.getElementById('bd-comply').textContent = `$${est.comply.toLocaleString()}`;
+      document.getElementById('bd-total').textContent = `$${est.total.toLocaleString()}`;
+
+      // Nav sidebar
+      document.getElementById('nav-delta').textContent = delta === 0 ? 'No change' : (delta > 0 ? `+$${delta.toLocaleString()}/mo` : `-$${Math.abs(delta).toLocaleString()}/mo`);
+      document.getElementById('nav-delta').style.color = delta > 0 ? 'var(--brand-color-error)' : delta < 0 ? 'var(--brand-color-success)' : 'var(--brand-color-text-secondary)';
+
+      // Flag list
+      const absPct = Math.abs(parseFloat(pct));
+      const flagList = document.getElementById('flag-list');
+      const flags = [];
+
+      if (delta === 0) {
+        flags.push({ type: 'ok', label: 'No cost change', detail: 'Estimate total unchanged — non-cost changes will save without re-approval.' });
+      } else if (delta > 0 && absPct < 15) {
+        flags.push({ type: 'ok', label: 'Minor increase — standard approval', detail: `${pct}% increase. Stays within standard approval path — no escalation required.` });
+      } else if (delta > 0 && absPct >= 15 && absPct < 30) {
+        flags.push({ type: 'warn', label: 'Moderate increase — Finance escalation', detail: `${pct}% increase triggers Finance Officer escalation. Allow additional 2–3 days for approval.` });
+      } else if (delta > 0 && absPct >= 30) {
+        flags.push({ type: 'warn', label: 'Major increase — Division Director required', detail: `${pct}% increase exceeds 30% threshold. Division Director approval added to chain.` });
+      } else if (delta < 0) {
+        flags.push({ type: 'ok', label: 'Cost reduction', detail: `Estimate reduced by $${Math.abs(delta).toLocaleString()}/mo. No additional approvals needed for decreases.` });
+      }
+
+      if (est.total > 10000) {
+        flags.push({ type: 'warn', label: 'Above $10k/mo threshold', detail: 'Estimates over $10,000/mo require additional CIDO Budget Authority step.' });
+      }
+
+      flagList.innerHTML = flags.map(f => `
+        <li class="flag-item ${f.type}">
+          <span class="flag-dot"></span>
+          <div><span class="flag-label">${f.label}</span><span style="display:block;font-size:11px;color:var(--brand-color-text-secondary);">${f.detail}</span></div>
+        </li>
+      `).join('');
+
+      // Approval path note
+      const absPctNum = Math.abs(parseFloat(pct));
+      const noteEl = document.getElementById('approval-note');
+      const navPath = document.getElementById('nav-approval-path');
+      if (est.total > 10000 || (delta > 0 && absPctNum >= 30)) {
+        noteEl.textContent = 'Extended approval path: Finance Officer + Division Director sign-off required.';
+        navPath.textContent = 'Extended';
+        navPath.style.color = 'var(--brand-color-warning-dark)';
+      } else {
+        noteEl.textContent = 'Standard approval path for estimates under $10,000/mo.';
+        navPath.textContent = 'Standard';
+        navPath.style.color = 'var(--brand-color-success)';
+      }
+
+      // Footer
+      const footerNote = document.getElementById('footer-note');
+      footerNote.textContent = delta === 0 ? 'Non-cost changes only — expedited save.' : `Estimate revised by ${delta > 0 ? '+' : ''}$${delta.toLocaleString()}/mo (${pct}%)`;
+      footerNote.style.color = delta > 0 ? 'var(--brand-color-error)' : delta < 0 ? 'var(--brand-color-success)' : 'var(--brand-color-text-secondary)';
+    }
+
+    function markChanged() {
+      changed = true;
+      document.getElementById('save-draft-btn').disabled = false;
+      document.getElementById('submit-btn').disabled = false;
+      document.getElementById('nav-status-after').textContent = 'Under Review';
+      document.getElementById('nav-status-after').style.color = 'var(--brand-color-warning-dark)';
+    }
+
+    function toggleSection(id) {
+      document.getElementById(id).classList.toggle('collapsed');
+    }
+
+    function scrollTo(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function cancelEdit() {
+      if (!changed || confirm('Discard all changes and return to Home?')) {
+        window.location.href = 'index.html';
+      }
+    }
+
+    function saveDraft() {
+      showToast('Draft saved — CE-8901-EST updated.');
+      document.getElementById('save-draft-btn').disabled = true;
+      changed = false;
+    }
+
+    function openSubmitModal() {
+      const est = calcEstimate();
+      const delta = est.total - BASE.currentEstimate;
+      const box = document.getElementById('change-summary-box');
+      const rows = [];
+      if (delta !== 0) rows.push({ label: 'Monthly Estimate', from: `$${BASE.currentEstimate.toLocaleString()}`, to: `$${est.total.toLocaleString()}` });
+      if (!rows.length) {
+        box.innerHTML = '<div style="font-size:13px;color:var(--brand-color-text-secondary);padding:4px 0;">Administrative / non-cost changes only</div>';
+      } else {
+        box.innerHTML = rows.map(r => `
+          <div class="change-row">
+            <span class="change-row-label">${r.label}</span>
+            <span class="tag-old">${r.from}</span>
+            <span style="color:var(--brand-color-text-tertiary);">→</span>
+            <span class="tag-new">${r.to}</span>
+          </div>
+        `).join('');
+      }
+      document.getElementById('submit-modal').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('submit-modal').classList.remove('open');
+    }
+
+    function confirmSubmit() {
+      closeModal();
+      document.getElementById('save-draft-btn').disabled = true;
+      document.getElementById('submit-btn').disabled = true;
+      showToast('CE-8901-EST submitted for approval review.');
+      setTimeout(() => { window.location.href = 'index.html'; }, 2200);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    // Init breakdown display
+    window.addEventListener('DOMContentLoaded', () => {
+      const e = calcEstimate();
+      document.getElementById('bd-compute').textContent = `$${e.compute.toLocaleString()}`;
+      document.getElementById('bd-gpu').textContent = `$${e.gpuCost.toLocaleString()}`;
+      document.getElementById('bd-net').textContent = `$${e.net.toLocaleString()}`;
+      document.getElementById('bd-storage').textContent = `$${e.sto.toLocaleString()}`;
+      document.getElementById('bd-comply').textContent = `$${e.comply.toLocaleString()}`;
+      document.getElementById('bd-total').textContent = `$${e.total.toLocaleString()}`;
+    });
+  </script>
+</body>
+</html>
