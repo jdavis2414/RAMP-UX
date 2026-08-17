@@ -1,0 +1,101 @@
+<style>
+  .sec { margin-bottom: 2rem; }
+  .sec-label { font-size: 11px; color: var(--color-text-secondary); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 16px; }
+  .row { display: flex; align-items: center; gap: 32px; flex-wrap: wrap; }
+  .col { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .sz { font-size: 11px; color: var(--color-text-secondary); }
+  .inline-row { display: flex; align-items: center; }
+  .inline-text { color: var(--color-text-secondary); }
+  hr.div { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1.75rem 0; }
+
+  @keyframes spin  { to { transform: rotate(360deg); } }
+  @keyframes dash  {
+    0%   { stroke-dashoffset: 108; }
+    50%  { stroke-dashoffset: 27;  }
+    100% { stroke-dashoffset: 108; }
+  }
+  .sp  { animation: spin 1.4s linear infinite; transform-origin: center; }
+  .da  { animation: dash 1.4s ease-in-out infinite; }
+</style>
+
+<h2 class="sr-only">MUI primary circular spinner — standalone and inline text variants at three sizes</h2>
+
+<div style="padding: 1.25rem 0;">
+
+  <div class="sec">
+    <div class="sec-label">Standalone</div>
+    <div class="row">
+
+      <div class="col">
+        <svg width="20" height="20" viewBox="0 0 20 20" overflow="visible">
+          <circle cx="10" cy="10" r="8.75" fill="none" stroke="#c8e0f7" stroke-width="2.5"/>
+          <g class="sp"><circle cx="10" cy="10" r="8.75" fill="none" stroke="#1976d2" stroke-width="2.5"
+            stroke-dasharray="54.98" stroke-dashoffset="108" class="da"
+            stroke-linecap="round" transform="rotate(-90 10 10)"/></g>
+        </svg>
+        <span class="sz">small · 20px</span>
+      </div>
+
+      <div class="col">
+        <svg width="40" height="40" viewBox="0 0 40 40" overflow="visible">
+          <circle cx="20" cy="20" r="17.2" fill="none" stroke="#c8e0f7" stroke-width="3.6"/>
+          <g class="sp"><circle cx="20" cy="20" r="17.2" fill="none" stroke="#1976d2" stroke-width="3.6"
+            stroke-dasharray="108.1" stroke-dashoffset="108" class="da"
+            stroke-linecap="round" transform="rotate(-90 20 20)"/></g>
+        </svg>
+        <span class="sz">medium · 40px</span>
+      </div>
+
+      <div class="col">
+        <svg width="56" height="56" viewBox="0 0 56 56" overflow="visible">
+          <circle cx="28" cy="28" r="25.75" fill="none" stroke="#c8e0f7" stroke-width="4.5"/>
+          <g class="sp"><circle cx="28" cy="28" r="25.75" fill="none" stroke="#1976d2" stroke-width="4.5"
+            stroke-dasharray="161.8" stroke-dashoffset="108" class="da"
+            stroke-linecap="round" transform="rotate(-90 28 28)"/></g>
+        </svg>
+        <span class="sz">large · 56px</span>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="div">
+
+  <div class="sec">
+    <div class="sec-label">Inline</div>
+    <div style="display:flex; flex-direction:column; gap:20px;">
+
+      <div class="inline-row" style="gap:10px;">
+        <svg width="20" height="20" viewBox="0 0 20 20" overflow="visible" style="flex-shrink:0;">
+          <circle cx="10" cy="10" r="8.75" fill="none" stroke="#c8e0f7" stroke-width="2.5"/>
+          <g class="sp"><circle cx="10" cy="10" r="8.75" fill="none" stroke="#1976d2" stroke-width="2.5"
+            stroke-dasharray="54.98" stroke-dashoffset="108" class="da"
+            stroke-linecap="round" transform="rotate(-90 10 10)"/></g>
+        </svg>
+        <span class="inline-text" style="font-size:13px;">Validating…</span>
+      </div>
+
+      <div class="inline-row" style="gap:10px;">
+        <svg width="40" height="40" viewBox="0 0 40 40" overflow="visible" style="flex-shrink:0;">
+          <circle cx="20" cy="20" r="17.2" fill="none" stroke="#c8e0f7" stroke-width="3.6"/>
+          <g class="sp"><circle cx="20" cy="20" r="17.2" fill="none" stroke="#1976d2" stroke-width="3.6"
+            stroke-dasharray="108.1" stroke-dashoffset="108" class="da"
+            stroke-linecap="round" transform="rotate(-90 20 20)"/></g>
+        </svg>
+        <span class="inline-text" style="font-size:14px;">Uploading file…</span>
+      </div>
+
+      <div class="inline-row" style="gap:10px;">
+        <svg width="56" height="56" viewBox="0 0 56 56" overflow="visible" style="flex-shrink:0;">
+          <circle cx="28" cy="28" r="25.75" fill="none" stroke="#c8e0f7" stroke-width="4.5"/>
+          <g class="sp"><circle cx="28" cy="28" r="25.75" fill="none" stroke="#1976d2" stroke-width="4.5"
+            stroke-dasharray="161.8" stroke-dashoffset="108" class="da"
+            stroke-linecap="round" transform="rotate(-90 28 28)"/></g>
+        </svg>
+        <span class="inline-text" style="font-size:16px;">Processing data…</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
