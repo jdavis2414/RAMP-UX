@@ -1,0 +1,55 @@
+SAVE AND EDIT WORKFLOW
+
+Feedback on Save
+How should feedback on 'save & continue' look/behave?
+
+Currently each 'on_focus' lost, pushes the field to the backend and subsequently to the database. After they have entered all the fields they can click the "Save & Continue" button to transition to the next 'Task' in the workflow. Technically it shouldn't need to 'resave' it and the button could just be 'Next' if we wanted to change it.
+The time to interact with the backend, save in the database and return the 200 ack, needs to be accounted for in the frontend via some feedback mechanism.
+Program to Environment relationship
+For Demonstration timeframe the Environment will be a 1 to 1 with the Program
+Post Demonstration timeframe the Program may need to be able to have multiple Environments
+
+Example:
+A program manager may want to create a cloud environment for IL4 during proposal then once awarded come back and 'add' environments for hardware and IL6 cloud. Would that be a 'new' environment or a 'Modify' workflow for the existing environment?
+
+In-Progress state/status
+How or should do we allow them to cancel an Environment In-Progress? (can wait until after demo)
+Can we modify or 'edit' an 'In Progress' environment? (can wait until after demo)
+ and 
+
+Workflow: User wants to add environments to an existing environment
+- We may consider different vocabulary for the main entity (currently environment) if it is going to contain multiple network environments for the sake of clarity
+- If the user were to add an environment to the existing program ----> User chooses "modify" or "add environments" option. This action would bring the user to an environment summary page that displays a breakdown of current environment parameters with the option to modify. Modification options would include adding additional environments to the program. Information would include cost updates as well as approval process wickets. 
+-  
+
+
+
+
+----------------------------------------------
+
+Define Users and Location Workflow
+
+
+Define User Set
+- The user will select the "DEFINE USERS AND LOCATIONS" workflow from the environment request workflow screen. 
+- The system presents a form with controls for selecting user roles. The user may select all roles that apply. 
+- The system will populate table rows with the selected user roles below the user role selection control. The form roles will contain controls for setting the number of each user role expected for the network environment. 
+- The user will select the appropriate number for each user role, and select the "CONFIRM" button below. 
+- Then the "CONFIRM" button will change to "EDIT" and the user role selections and numbers will remain locked until edited
+- The user will select "NEXT" to advance the form to the user locations section
+
+Define User Locations
+- When the user has defined numbers for each user role and selected, the system will present form controls for selecting the cities where network users will be located. These controls can be a dropdown with actions to add selected city to a list, or available cities my be displayed as a set of UI "chips" representing all eligible locations  
+- Then the user selects all appropriate cities which are added to a list
+- Each city entry on the list will display all eligible facilities/campuses. 
+- The user will select all eligible cities and then be presented with a list of campuses/buildings and floors for each campus  
+- The user will select appropriate campuses/buildings and floors
+- The system will present a list of the selected cities and associated campuses/buildings, and floors (do we allow for room numbers as well?)
+- The user will review the list and when they have determined that the list is complete, the user will click "NEXT"
+- The system will present the user with a summary report detailing selected user roles and associated numbers, as well as all city and facility selections
+- The user may return to previous sections of the Define Users and Location form
+- When the user has determined that the form is correct, they will select "CONFIRM"
+- The system will return the user to the main environment request screen 
+
+
+
